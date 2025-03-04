@@ -25,3 +25,9 @@ variable "topics" {
   default     = []
   description = "List of repo topics"
 }
+
+variable "default_branch" {
+  type        = string
+  default     = "main"
+  description = "Name of default branch"
+}
