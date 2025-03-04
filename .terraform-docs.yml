@@ -1,0 +1,10 @@
+---
+formatter: markdown table
+
+recursive:
+  enabled: true
+  path: .
+
+output:
+  file: terraform.md
+  mode: inject
