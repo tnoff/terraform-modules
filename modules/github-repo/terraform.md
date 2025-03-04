@@ -22,6 +22,7 @@ No modules.
 |------|------|
 | [github_actions_secret.this](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/actions_secret) | resource |
 | [github_repository.this](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository) | resource |
+| [github_repository_topics.this](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository_topics) | resource |
 
 ## Inputs
 
@@ -31,6 +32,7 @@ No modules.
 | <a name="input_is_public"></a> [is\_public](#input\_is\_public) | Is repository public | `bool` | `true` | no |
 | <a name="input_repo_description"></a> [repo\_description](#input\_repo\_description) | Description for repository | `string` | n/a | yes |
 | <a name="input_repo_name"></a> [repo\_name](#input\_repo\_name) | Name of repository | `string` | n/a | yes |
+| <a name="input_topics"></a> [topics](#input\_topics) | List of repo topics | `list(string)` | `[]` | no |
 
 ## Outputs
 

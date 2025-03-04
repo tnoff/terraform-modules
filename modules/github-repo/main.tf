@@ -17,3 +17,8 @@ resource "github_actions_secret" "this" {
   secret_name     = each.key
   plaintext_value = each.value
 }
+
+resource "github_repository_topics" "this" {
+  repository = var.repo_name
+  topics     = var.topics
+}

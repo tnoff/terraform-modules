@@ -1,6 +1,12 @@
 repos:
   - repo: local
     hooks:
+      - id: terraform-fmt
+        name: terraform-fmt
+        language: docker_image
+        entry: hashicorp/terraform:1.11
+        args: ["fmt", "-write=true", "-recursive"]
+        pass_filenames: false
       - id: terraform-docs
         name: terraform-docs
         language: docker_image

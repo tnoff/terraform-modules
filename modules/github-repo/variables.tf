@@ -19,3 +19,9 @@ variable "action_secrets" {
   default     = {}
   description = "Key/Value pair for action secrets"
 }
+
+variable "topics" {
+  type        = list(string)
+  default     = []
+  description = "List of repo topics"
+}
