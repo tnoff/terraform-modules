@@ -2,7 +2,7 @@ resource "cloudflare_zone" "this" {
   account = {
     id = var.cloudflare_account_id
   }
-  zone = var.zone_name
+  name = var.zone_name
 }
 
 resource "cloudflare_dns_record" "this" {
