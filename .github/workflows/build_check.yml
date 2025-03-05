@@ -1,0 +1,33 @@
+name: Terraform Format
+
+on:
+  pull_request:
+
+jobs:
+  terraform:
+    name: "Terraform Format"
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      pull-requests: read
+    steps:
+      # Checkout the repository to the GitHub Actions runner
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+      - name: Terraform Init
+        id: init
+        run: terraform -chdir=terraform/ init
+      - name: Terraform Format
+        id: fmt
+        run: terraform -chdir=terraform/ fmt -check -recursive
+      # Run a terraform validate
+      - name: Terraform Validate
+        id: validate
+        # Run even if formatting fails
+        if: success() || failure()
+        run: terraform -chdir=terraform/ validate -no-color
+      - name: Terraform Plan
+        id: plan
+        run: terraform -chdir=terraform/ plan -no-color -input=false
