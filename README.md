@@ -2,6 +2,28 @@
 
 A collection of terraform modules from my personal development.
 
+## Cloudflare
+
+Cloudflare DNS entries, best used when you can programmatically set the A records.
+
+```
+terraform {
+  required_providers {
+    cloudflare = {
+      source  = "cloudflare/cloudflare"
+      version = "~> 4.0"
+    }
+  }
+  required_version = "~> 1.9"
+}
+```
+
+```
+provider "cloudflare" {
+  api_token = var.cloudflare_api_token
+}
+```
+
 ## Github
 
 Github repos and other defaults for repositories. Includes support for injecting action secrets.
