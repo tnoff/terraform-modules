@@ -15,7 +15,7 @@ resource "github_actions_secret" "this" {
   for_each        = tomap(var.action_secrets)
   repository      = github_repository.this.name
   secret_name     = each.key
-  encrypted_value = base64encode(each.value)
+  plaintext_value = each.value
 }
 
 resource "github_repository_topics" "this" {
