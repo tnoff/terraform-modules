@@ -30,3 +30,12 @@ variable "tags" {
   default     = {}
   description = "Extra freeform tags for bucket"
 }
+
+variable "replication_destination" {
+  type = map(object({
+    bucket_name   = string,
+    bucket_region = string
+  }))
+  default     = {}
+  description = "Replication bucket settings"
+}
