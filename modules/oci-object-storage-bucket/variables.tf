@@ -36,6 +36,6 @@ variable "replication_destination" {
     bucket_name   = string,
     bucket_region = string
   })
-  default     = {}
+  default     = null
   description = "Replication bucket settings"
 }

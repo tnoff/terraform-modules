@@ -46,7 +46,7 @@ resource "oci_objectstorage_object_lifecycle_policy" "this" {
 }
 
 resource "oci_objectstorage_replication_policy" "this" {
-  count                   = var.replication_destination == {} ? 1 : 0
+  count                   = var.replication_destination != null ? 1 : 0
   bucket                  = oci_objectstorage_bucket.this.name
   destination_bucket_name = var.replication_destination.bucket_name
   destination_region_name = var.replication_destination.bucket_region

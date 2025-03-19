@@ -33,7 +33,7 @@ No modules.
 | <a name="input_delete_after"></a> [delete\_after](#input\_delete\_after) | Delete objects in bucket after X days, if 0 does not set | `number` | `0` | no |
 | <a name="input_name"></a> [name](#input\_name) | Name for bucket | `string` | n/a | yes |
 | <a name="input_namespace"></a> [namespace](#input\_namespace) | Object storage namespace for bucket | `string` | n/a | yes |
-| <a name="input_replication_destination"></a> [replication\_destination](#input\_replication\_destination) | Replication bucket settings | <pre>object({<br/>    bucket_name   = string,<br/>    bucket_region = string<br/>  })</pre> | `{}` | no |
+| <a name="input_replication_destination"></a> [replication\_destination](#input\_replication\_destination) | Replication bucket settings | <pre>object({<br/>    bucket_name   = string,<br/>    bucket_region = string<br/>  })</pre> | `null` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | Extra freeform tags for bucket | `map(any)` | `{}` | no |
 
 ## Outputs
