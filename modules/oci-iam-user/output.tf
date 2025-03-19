@@ -7,5 +7,5 @@ output "group" {
 }
 
 output "auth_token" {
-  value = var.enable_auth_token ? oci_identity_auth_token.this : ""
+  value = var.enable_auth_token ? oci_identity_auth_token.this.0 : ""
 }
