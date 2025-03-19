@@ -2,6 +2,14 @@
 
 A collection of terraform modules from my personal development.
 
+## Development
+
+Install the terraform-docs pre-commit hook:
+
+```
+pre-commit install
+```
+
 ## Cloudflare
 
 Cloudflare DNS entries, best used when you can programmatically set the A records.
@@ -48,10 +56,21 @@ provider "github" {
 }
 ```
 
-## Development
+## OCI
 
-Install the terraform-docs pre-commit hook:
+OCI modules for various things.
 
+Requires a [oci provider](https://registry.terraform.io/providers/oracle/oci/latest) installed.
+
+provider.tf
 ```
-pre-commit install
+terraform {
+  required_providers {
+    oci = {
+      source  = "oracle/oci"
+      version = "~> 6.20"
+    }
+  }
+  required_version = "~> 1.9"
+}
 ```
