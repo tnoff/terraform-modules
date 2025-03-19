@@ -3,7 +3,7 @@ formatter: markdown table
 
 recursive:
   enabled: true
-  path: .
+  path: modules
 
 output:
   file: terraform.md

@@ -11,5 +11,5 @@ repos:
         name: terraform-docs
         language: docker_image
         entry: quay.io/terraform-docs/terraform-docs:0.19.0  # or, change latest to pin to a specific version
-        args: ["modules/github-repo/"]
+        args: ["."]
         pass_filenames: false
