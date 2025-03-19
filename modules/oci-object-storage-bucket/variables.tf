@@ -32,10 +32,10 @@ variable "tags" {
 }
 
 variable "replication_destination" {
-  type = map(object({
+  type = object({
     bucket_name   = string,
     bucket_region = string
-  }))
+  })
   default     = {}
   description = "Replication bucket settings"
 }
