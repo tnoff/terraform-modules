@@ -87,7 +87,49 @@ provider "oci" {
 }
 ```
 
+### Example Setup
+
+Steps to setup a terraform user
+
 The auth information corresponds to an OCI user, similar to what you put in a `~/.oci/config` file. User will need to have permissions to run actions in modules.
+
+## Tenant Admin Policy
+
+Create new terraform user
+
+```
+$ oci iam user create --name "terraform" --description "Terraform User"
+```
+
+Create terraform access grup
+
+```
+$ oci  iam group create --name "terraform" --description "Terraform Access Group"
+```
+
+Add user to new group
+
+```
+$ oci iam group add-user --user-id <user-id> --group-id <group-id>
+```
+
+Give group access to manage resources in tenancy
+
+```
+$ oci iam policy create -c <tenancy-ocid> --name "terraform-access" --description "Terraform Access Policy" --statements '["ALLOW GROUP terraform to manage all-resources IN TENANCY"]'
+```
+
+Setup a key for terraform to use
+
+```
+$ oci setup keys --key-name terraform-key
+```
+
+Add public key to user
+
+```
+$ oci iam user api-key upload --user-id <user-id> --key-file ~/.oci/terraform-key_public.pem
+```
 
 ## Discord
 
