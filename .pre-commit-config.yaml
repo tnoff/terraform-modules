@@ -7,9 +7,21 @@ repos:
         entry: hashicorp/terraform:1.11
         args: ["fmt", "-write=true", "-recursive"]
         pass_filenames: false
-      - id: terraform-docs
-        name: terraform-docs
+      - id: terraform-docs-cloudflare
+        name: terraform-docs-cloudflare
         language: docker_image
         entry: quay.io/terraform-docs/terraform-docs:0.19.0  # or, change latest to pin to a specific version
-        args: ["modules/"]
+        args: ["cloudflare/"]
+        pass_filenames: false
+      - id: terraform-docs-github
+        name: terraform-docs-github
+        language: docker_image
+        entry: quay.io/terraform-docs/terraform-docs:0.19.0  # or, change latest to pin to a specific version
+        args: ["github/"]
+        pass_filenames: false
+      - id: terraform-docs-oci
+        name: terraform-docs-oci
+        language: docker_image
+        entry: quay.io/terraform-docs/terraform-docs:0.19.0  # or, change latest to pin to a specific version
+        args: ["oci/"]
         pass_filenames: false
