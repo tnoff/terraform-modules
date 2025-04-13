@@ -7,5 +7,5 @@ resource "github_repository_webhook" "this" {
     insecure_ssl = false
   }
 
-  events = ["issues", "pull_request"]
+  events = ["issues", "pull_request", "dependabot_alert"]
 }
