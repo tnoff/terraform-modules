@@ -31,3 +31,9 @@ variable "default_branch" {
   default     = "main"
   description = "Name of default branch"
 }
+
+variable "repo_labels" {
+  type        = map(any)
+  default     = {}
+  description = "Key/Value pair of label name and color"
+}

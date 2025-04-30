@@ -18,6 +18,13 @@ resource "github_actions_secret" "this" {
   plaintext_value = each.value
 }
 
+resource "github_issue_label" "test_repo" {
+  for_each   = tomap(var.repo_labels)
+  repository = github_repository.this.name
+  name       = each.key
+  color      = each.value
+}
+
 resource "github_repository_topics" "this" {
   repository = github_repository.this.name
   topics     = var.topics
