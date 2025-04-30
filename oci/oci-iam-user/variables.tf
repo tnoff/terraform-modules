@@ -41,3 +41,9 @@ variable "user_public_key" {
   default     = ""
   description = "Public key to add to user"
 }
+
+variable "user_secret_key" {
+  type        = string
+  default     = ""
+  description = "Create user secret keys with this display name"
+}

@@ -37,6 +37,12 @@ resource "oci_identity_api_key" "this" {
   key_value = var.user_public_key
 }
 
+resource "oci_identity_customer_secret_key" "this" {
+  count        = var.user_secret_key == "" ? 0 : 1
+  display_name = var.user_secret_key
+  user_id      = oci_identity_user.this.id
+}
+
 resource "oci_identity_policy" "this" {
   count          = length(local.statements) > 0 ? 1 : 0
   compartment_id = var.tenancy_ocid
