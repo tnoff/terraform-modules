@@ -9,7 +9,7 @@ variable "name" {
 }
 
 variable "freeform_tags" {
-  type        = object
+  type        = map(string)
   description = "Freeform tags to add"
 }
 
