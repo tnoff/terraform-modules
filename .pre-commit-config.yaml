@@ -3,31 +3,30 @@ repos:
     hooks:
       - id: terraform-fmt
         name: terraform-fmt
-        language: docker_image
-        entry: hashicorp/terraform:1.11
-        args: ["fmt", "-write=true", "-recursive"]
+        language: script
+        entry: .pre-commit-scripts/terraform-fmt.sh
         pass_filenames: false
-      - id: terraform-docs-cloudflare
-        name: terraform-docs-cloudflare
-        language: docker_image
-        entry: quay.io/terraform-docs/terraform-docs:0.19.0  # or, change latest to pin to a specific version
-        args: ["cloudflare/"]
+      - id: terraform-docs-check-cloudflare
+        name: terraform-docs-check-cloudflare
+        language: script
+        entry: .pre-commit-scripts/check-terraform-docs.sh
+        args: ["cloudflare"]
         pass_filenames: false
-      - id: terraform-docs-github
-        name: terraform-docs-github
-        language: docker_image
-        entry: quay.io/terraform-docs/terraform-docs:0.19.0  # or, change latest to pin to a specific version
-        args: ["github/"]
+      - id: terraform-docs-check-github
+        name: terraform-docs-check-github
+        language: script
+        entry: .pre-commit-scripts/check-terraform-docs.sh
+        args: ["github"]
         pass_filenames: false
-      - id: terraform-docs-oci
-        name: terraform-docs-oci
-        language: docker_image
-        entry: quay.io/terraform-docs/terraform-docs:0.19.0  # or, change latest to pin to a specific version
-        args: ["oci/"]
+      - id: terraform-docs-check-oci
+        name: terraform-docs-check-oci
+        language: script
+        entry: .pre-commit-scripts/check-terraform-docs.sh
+        args: ["oci"]
         pass_filenames: false
-      - id: terraform-docs-discord
-        name: terraform-docs-discord
-        language: docker_image
-        entry: quay.io/terraform-docs/terraform-docs:0.19.0  # or, change latest to pin to a specific version
-        args: ["discord/"]
+      - id: terraform-docs-check-discord
+        name: terraform-docs-check-discord
+        language: script
+        entry: .pre-commit-scripts/check-terraform-docs.sh
+        args: ["discord"]
         pass_filenames: false
