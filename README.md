@@ -2,13 +2,16 @@
 
 A collection of terraform modules from my personal development.
 
-## Development
+## Usage
 
-Install the terraform-docs pre-commit hook:
+You can pass the Github Url with a commit sha for the module in your terraform.
 
 ```
-pre-commit install
+module foo {
+  source       = "git::https://github.com/tnoff/terraform-modules.git///oci/oci-iam-user?ref=fd04a4e1e6e59497276a1e353534b7ec458be054"
+}
 ```
+
 
 ## Cloudflare
 
@@ -93,7 +96,7 @@ Steps to setup a terraform user
 
 The auth information corresponds to an OCI user, similar to what you put in a `~/.oci/config` file. User will need to have permissions to run actions in modules.
 
-## Tenant Admin Policy
+####  Tenant Admin Policy
 
 Create new terraform user
 
