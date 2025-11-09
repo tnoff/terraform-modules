@@ -18,10 +18,10 @@ jobs:
         uses: hashicorp/setup-terraform@v2
       - name: Terraform Format
         id: fmt
-        run: terraform -chdir=modules/ fmt -check -recursive
+        run: terraform  fmt -check -recursive
       # Run a terraform validate
       - name: Terraform Validate
         id: validate
         # Run even if formatting fails
         if: success() || failure()
-        run: terraform -chdir=modules/ validate -no-color
+        run: terraform validate -no-color
