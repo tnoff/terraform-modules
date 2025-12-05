@@ -30,3 +30,9 @@ repos:
         entry: .pre-commit-scripts/check-terraform-docs.sh
         args: ["discord"]
         pass_filenames: false
+      - id: terraform-docs-check-kubernetes
+        name: terraform-docs-check-kubernetes
+        language: script
+        entry: .pre-commit-scripts/check-terraform-docs.sh
+        args: ["kubernetes"]
+        pass_filenames: false
