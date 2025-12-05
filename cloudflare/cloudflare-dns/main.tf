@@ -7,7 +7,7 @@ data "cloudflare_zone" "this_zone" {
 
 resource "cloudflare_dns_record" "this" {
   for_each = toset(var.ip_list)
-  zone_id  = cloudflare_zone.this_zone.id
+  zone_id  = data.cloudflare_zone.this_zone.id
   name     = var.zone_name
   content  = each.key
   type     = "A"
