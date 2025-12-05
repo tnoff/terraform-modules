@@ -8,6 +8,11 @@ variable "zone_name" {
   description = "Name of DNS Zone to Update"
 }
 
+variable "zone_id" {
+  type        = string
+  description = "ID of DNS Zone to Update"
+}
+
 variable "ip_list" {
   type        = list(string)
   description = "List of IPs for A Records"
