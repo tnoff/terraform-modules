@@ -24,6 +24,7 @@ resource "oci_objectstorage_bucket" "this" {
   name           = var.name
   namespace      = var.namespace
   freeform_tags  = var.tags
+  kms_key_id     = var.kms_key_id
 }
 
 resource "oci_objectstorage_object_lifecycle_policy" "this" {

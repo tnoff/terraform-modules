@@ -13,6 +13,11 @@ variable "name" {
   description = "Name for bucket"
 }
 
+variable "kms_key_id" {
+  type        = string
+  description = "KMS Key OCID"
+}
+
 variable "delete_after" {
   type        = number
   default     = 0

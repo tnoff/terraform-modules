@@ -31,6 +31,7 @@ No modules.
 | <a name="input_archive_after"></a> [archive\_after](#input\_archive\_after) | Delete objects in bucket after X days, if 0 does not set | `number` | `30` | no |
 | <a name="input_compartment_id"></a> [compartment\_id](#input\_compartment\_id) | Compartment OCID for bucket | `string` | n/a | yes |
 | <a name="input_delete_after"></a> [delete\_after](#input\_delete\_after) | Delete objects in bucket after X days, if 0 does not set | `number` | `0` | no |
+| <a name="input_kms_key_id"></a> [kms\_key\_id](#input\_kms\_key\_id) | KMS Key OCID | `string` | n/a | yes |
 | <a name="input_name"></a> [name](#input\_name) | Name for bucket | `string` | n/a | yes |
 | <a name="input_namespace"></a> [namespace](#input\_namespace) | Object storage namespace for bucket | `string` | n/a | yes |
 | <a name="input_replication_destination"></a> [replication\_destination](#input\_replication\_destination) | Replication bucket settings | <pre>object({<br/>    bucket_name   = string,<br/>    bucket_region = string<br/>  })</pre> | `null` | no |
