@@ -32,6 +32,7 @@ No modules.
 | <a name="input_freeform_tags"></a> [freeform\_tags](#input\_freeform\_tags) | Tags for created block volumes/load balancers | `map(any)` | `{}` | no |
 | <a name="input_image_id"></a> [image\_id](#input\_image\_id) | Image OCID for node pools | `string` | `null` | no |
 | <a name="input_instance_tags"></a> [instance\_tags](#input\_instance\_tags) | Tags for node pool instances | `map(any)` | `{}` | no |
+| <a name="input_kms_key_id"></a> [kms\_key\_id](#input\_kms\_key\_id) | OCID of KMS Key Id to use for nodes | `string` | n/a | yes |
 | <a name="input_kubernetes_version"></a> [kubernetes\_version](#input\_kubernetes\_version) | Kubernetes version for cluster | `string` | `"1.33.0"` | no |
 | <a name="input_memory_in_gbs"></a> [memory\_in\_gbs](#input\_memory\_in\_gbs) | Memory for each node in node pool | `number` | `6` | no |
 | <a name="input_name"></a> [name](#input\_name) | Container Engine cluster name | `string` | n/a | yes |
