@@ -14,6 +14,7 @@ resource "oci_containerengine_cluster" "this" {
     }
     service_lb_subnet_ids = var.lb_subnet_ids
   }
+  kms_key_id = var.kms_key_id
   endpoint_config {
     is_public_ip_enabled = var.enable_public_endpoint
     nsg_ids              = []
