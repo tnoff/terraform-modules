@@ -17,6 +17,7 @@ resource "oci_containerengine_node_pool" "this" {
 
   freeform_tags = var.freeform_tags
   node_config_details {
+    kms_key_id = var.kms_key_id
     placement_configs {
       availability_domain = var.availability_domain
       subnet_id           = var.worker_pool_subnet_id

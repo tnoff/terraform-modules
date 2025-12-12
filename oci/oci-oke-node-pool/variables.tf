@@ -8,6 +8,11 @@ variable "cluster_ocid" {
   description = "OKE Cluster OCID"
 }
 
+variable "kms_key_id" {
+  type        = string
+  description = "OCID of KMS Key Id to use for nodes"
+}
+
 variable "name" {
   type        = string
   description = "Container Engine cluster name"
