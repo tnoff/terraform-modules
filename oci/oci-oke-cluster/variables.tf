@@ -37,7 +37,10 @@ variable "kubernetes_version" {
   description = "Kubernetes version for cluster"
 }
 
-
+variable "kms_key_id" {
+  type        = string
+  description = "KMS Key OCID to use for OKE encryption"
+}
 
 variable "freeform_tags" {
   type        = map(any)
