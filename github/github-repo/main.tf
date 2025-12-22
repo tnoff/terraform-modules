@@ -20,7 +20,7 @@ resource "github_actions_secret" "this" {
 
 resource "github_actions_variable" "this" {
   for_each      = tomap(var.action_variables)
-  epository     = github_repository.this.name
+  repository    = github_repository.this.name
   variable_name = each.key
   value         = each.value
 }
