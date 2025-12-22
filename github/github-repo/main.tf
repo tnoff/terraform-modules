@@ -18,6 +18,13 @@ resource "github_actions_secret" "this" {
   plaintext_value = each.value
 }
 
+resource "github_actions_variable" "this" {
+  for_each      = tomap(var.action_variables)
+  epository     = github_repository.this.name
+  variable_name = each.key
+  value         = each.value
+}
+
 resource "github_issue_label" "test_repo" {
   for_each   = tomap(var.repo_labels)
   repository = github_repository.this.name
