@@ -46,3 +46,23 @@ resource "github_branch_default" "this" {
   repository = github_repository.this.name
   branch     = github_branch.default.branch
 }
+
+
+resource "github_branch_protection" "this" {
+  repository_id = github_repository.this.name
+
+  pattern          = github_branch.default.branch
+  enforce_admins   = true
+  allows_deletions = false
+
+  required_status_checks {
+    strict   = true
+    contexts = var.required_status_checks
+  }
+
+  required_pull_request_reviews {
+    dismiss_stale_reviews      = true
+    restrict_dismissals        = true
+    require_code_owner_reviews = true
+  }
+}

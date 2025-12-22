@@ -43,3 +43,9 @@ variable "repo_labels" {
   default     = {}
   description = "Key/Value pair of label name and color"
 }
+
+variable "required_status_checks" {
+  type        = list(string)
+  default     = []
+  description = "List of default status checks that must pass before merge"
+}
