@@ -1,11 +1,11 @@
-name: Terraform Format
+name: CI
 
 on:
   pull_request:
 
 jobs:
   terraform:
-    name: "Terraform Format"
+    name: "Terraform Fmt"
     runs-on: ubuntu-24.04
     permissions:
       contents: read
