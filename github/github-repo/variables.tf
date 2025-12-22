@@ -20,6 +20,12 @@ variable "action_secrets" {
   description = "Key/Value pair for action secrets"
 }
 
+variable "action_variables" {
+  type        = map(any)
+  default     = {}
+  description = "Key/Value pair for action variables"
+}
+
 variable "topics" {
   type        = list(string)
   default     = []
