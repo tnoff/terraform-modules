@@ -48,21 +48,47 @@ resource "github_branch_default" "this" {
 }
 
 
-resource "github_branch_protection" "this" {
-  repository_id = github_repository.this.name
+resource "github_repository_ruleset" "this" {
+  name        = "main-branch-protection"
+  repository  = github_repository.this.name
+  target      = "branch"
+  enforcement = "active"
 
-  pattern          = github_branch.default.branch
-  enforce_admins   = true
-  allows_deletions = false
-
-  required_status_checks {
-    strict   = true
-    contexts = var.required_status_checks
+  conditions {
+    ref_name {
+      include = ["~DEFAULT_BRANCH"]
+      exclude = []
+    }
   }
 
-  required_pull_request_reviews {
-    dismiss_stale_reviews      = true
-    restrict_dismissals        = true
-    require_code_owner_reviews = true
+  bypass_actors {
+    actor_id    = 5 # Repository admin
+    actor_type  = "RepositoryRole"
+    bypass_mode = "always"
+  }
+
+  rules {
+    deletion                = true
+    non_fast_forward        = true
+    required_linear_history = false
+
+    pull_request {
+      dismiss_stale_reviews_on_push     = true
+      require_code_owner_review         = true
+      required_review_thread_resolution = false
+    }
+
+    dynamic "required_status_checks" {
+      for_each = length(var.required_status_checks) > 0 ? [1] : []
+      content {
+        dynamic "required_check" {
+          for_each = var.required_status_checks
+          content {
+            context = required_check.value
+          }
+        }
+        strict_required_status_checks_policy = true
+      }
+    }
   }
 }
