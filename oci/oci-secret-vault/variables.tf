@@ -19,3 +19,15 @@ variable "key_shape_length" {
   default     = 16
   description = "Key shape length"
 }
+
+variable "tags" {
+  type        = map(any)
+  default     = {}
+  description = "Freeform tags for vault and key"
+}
+
+variable "protection_mode" {
+  type        = string
+  default     = "SOFTWARE"
+  description = "SOFTWARE/HSM"
+}
