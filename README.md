@@ -8,7 +8,7 @@ You can pass the Github Url with a commit sha for the module in your terraform.
 
 ```
 module foo {
-  source       = "git::https://github.com/tnoff/terraform-modules.git///oci/oci-iam-user?ref=fd04a4e1e6e59497276a1e353534b7ec458be054"
+  source       = "git::https://github.com/tnoff/terraform-modules.git///oci/iam-user?ref=fd04a4e1e6e59497276a1e353534b7ec458be054"
 }
 ```
 
