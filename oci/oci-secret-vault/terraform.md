@@ -31,6 +31,8 @@ No modules.
 | <a name="input_key_shape_algorithm"></a> [key\_shape\_algorithm](#input\_key\_shape\_algorithm) | Key shape algorithm | `string` | `"AES"` | no |
 | <a name="input_key_shape_length"></a> [key\_shape\_length](#input\_key\_shape\_length) | Key shape length | `number` | `16` | no |
 | <a name="input_name"></a> [name](#input\_name) | Name of vault | `string` | n/a | yes |
+| <a name="input_protection_mode"></a> [protection\_mode](#input\_protection\_mode) | SOFTWARE/HSM | `string` | `"SOFTWARE"` | no |
+| <a name="input_tags"></a> [tags](#input\_tags) | Freeform tags for vault and key | `map(any)` | `{}` | no |
 
 ## Outputs
 
