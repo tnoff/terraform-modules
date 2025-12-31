@@ -30,6 +30,30 @@ variable "archive_after" {
   description = "Delete objects in bucket after X days, if 0 does not set"
 }
 
+variable "abort_incomplete_uploads_after" {
+  type        = number
+  default     = 0
+  description = "Abort incomplete multipart uploads after X days, if 0 does not set"
+}
+
+variable "versioning_enabled" {
+  type        = bool
+  default     = false
+  description = "Enable versioning on the bucket"
+}
+
+variable "archive_previous_versions_after" {
+  type        = number
+  default     = 0
+  description = "Archive previous object versions after X days, if 0 does not set (only applies when versioning is enabled)"
+}
+
+variable "delete_previous_versions_after" {
+  type        = number
+  default     = 0
+  description = "Delete previous object versions after X days, if 0 does not set (only applies when versioning is enabled)"
+}
+
 variable "tags" {
   type        = map(any)
   default     = {}
