@@ -1,15 +1,16 @@
-variable "compartment_id" {
+variable "compartment_ocid" {
   type        = string
   description = "OCID of compartment for container repo"
 }
 
-variable "name" {
+variable "display_name" {
   type        = string
   description = "Name for container repo"
 }
 
 variable "freeform_tags" {
-  type        = map(string)
+  type        = map(any)
+  default     = {}
   description = "Freeform tags to add"
 }
 

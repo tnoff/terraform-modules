@@ -34,9 +34,10 @@ No modules.
 |------|-------------|------|---------|:--------:|
 | <a name="input_compartments"></a> [compartments](#input\_compartments) | List of compartment OCIDs for verbs | `list(string)` | n/a | yes |
 | <a name="input_enable_auth_token"></a> [enable\_auth\_token](#input\_enable\_auth\_token) | Enable auth token for user | `bool` | `true` | no |
-| <a name="input_group_name"></a> [group\_name](#input\_group\_name) | Name of group for user | `string` | n/a | yes |
+| <a name="input_freeform_tags"></a> [freeform\_tags](#input\_freeform\_tags) | Freeform tags for user, group, and policy | `map(any)` | `{}` | no |
+| <a name="input_group_display_name"></a> [group\_display\_name](#input\_group\_display\_name) | Name of group for user | `string` | n/a | yes |
 | <a name="input_tenancy_ocid"></a> [tenancy\_ocid](#input\_tenancy\_ocid) | Tenancy OCID | `string` | n/a | yes |
-| <a name="input_user_name"></a> [user\_name](#input\_user\_name) | Name of bot user | `string` | n/a | yes |
+| <a name="input_user_display_name"></a> [user\_display\_name](#input\_user\_display\_name) | Name of bot user | `string` | n/a | yes |
 | <a name="input_user_public_key"></a> [user\_public\_key](#input\_user\_public\_key) | Public key to add to user | `string` | `""` | no |
 | <a name="input_user_secret_key"></a> [user\_secret\_key](#input\_user\_secret\_key) | Create user secret keys with this display name | `string` | `""` | no |
 | <a name="input_verbs"></a> [verbs](#input\_verbs) | List of verbs to allow, such as 'manage object-family' | `list(string)` | `[]` | no |

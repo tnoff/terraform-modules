@@ -44,10 +44,11 @@ No modules.
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_bastion_cidr_block"></a> [bastion\_cidr\_block](#input\_bastion\_cidr\_block) | CIDR block for bastion hosts | `string` | `"10.0.30.0/24"` | no |
-| <a name="input_compartment_id"></a> [compartment\_id](#input\_compartment\_id) | Comaprtment OCID | `string` | n/a | yes |
+| <a name="input_compartment_ocid"></a> [compartment\_ocid](#input\_compartment\_ocid) | Comaprtment OCID | `string` | n/a | yes |
+| <a name="input_display_name"></a> [display\_name](#input\_display\_name) | Name prefix for all resources | `string` | n/a | yes |
+| <a name="input_freeform_tags"></a> [freeform\_tags](#input\_freeform\_tags) | Freeform tags for networking resources | `map(any)` | `{}` | no |
 | <a name="input_k8s_api_cidr_block"></a> [k8s\_api\_cidr\_block](#input\_k8s\_api\_cidr\_block) | CIDR block for private subnet | `string` | `"10.0.0.0/28"` | no |
 | <a name="input_lb_cidr_block"></a> [lb\_cidr\_block](#input\_lb\_cidr\_block) | CIDR block for lb subnet | `string` | `"10.0.20.0/24"` | no |
-| <a name="input_name"></a> [name](#input\_name) | Name prefix for all resources | `string` | n/a | yes |
 | <a name="input_vcn_cidr_block"></a> [vcn\_cidr\_block](#input\_vcn\_cidr\_block) | CIDR Block for entire VPC | `string` | `"10.0.0.0/16"` | no |
 | <a name="input_worker_subnet_cidr_block"></a> [worker\_subnet\_cidr\_block](#input\_worker\_subnet\_cidr\_block) | CIDR Block for worker node subnet | `string` | `"10.0.10.0/24"` | no |
 

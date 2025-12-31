@@ -3,12 +3,12 @@ variable "tenancy_ocid" {
   description = "Tenancy OCID"
 }
 
-variable "user_name" {
+variable "user_display_name" {
   type        = string
   description = "Name of bot user"
 }
 
-variable "group_name" {
+variable "group_display_name" {
   type        = string
   description = "Name of group for user"
 }
@@ -46,4 +46,10 @@ variable "user_secret_key" {
   type        = string
   default     = ""
   description = "Create user secret keys with this display name"
+}
+
+variable "freeform_tags" {
+  type        = map(any)
+  default     = {}
+  description = "Freeform tags for user, group, and policy"
 }

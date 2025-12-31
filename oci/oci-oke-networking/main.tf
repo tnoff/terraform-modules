@@ -9,11 +9,12 @@ locals {
 ########
 
 resource "oci_core_vcn" "this" {
-  compartment_id = var.compartment_id
+  compartment_id = var.compartment_ocid
   cidr_block     = var.vcn_cidr_block
-  display_name   = "${var.name}-network"
+  display_name   = "${var.display_name}-network"
   # Doesn't seem to like dashes in name
-  dns_label = replace(var.name, "-", "")
+  dns_label     = replace(var.display_name, "-", "")
+  freeform_tags = var.freeform_tags
 
   lifecycle {
     ignore_changes = [
@@ -24,24 +25,27 @@ resource "oci_core_vcn" "this" {
 }
 
 resource "oci_core_service_gateway" "this" {
-  compartment_id = var.compartment_id
+  compartment_id = var.compartment_ocid
   vcn_id         = oci_core_vcn.this.id
-  display_name   = "${var.name}-all-oci-services"
+  display_name   = "${var.display_name}-all-oci-services"
+  freeform_tags  = var.freeform_tags
   services {
     service_id = local.oci_all_service_gateway[0].id
   }
 }
 
 resource "oci_core_nat_gateway" "this" {
-  compartment_id = var.compartment_id
+  compartment_id = var.compartment_ocid
   vcn_id         = oci_core_vcn.this.id
-  display_name   = "${var.name}-nat-gateway"
+  display_name   = "${var.display_name}-nat-gateway"
+  freeform_tags  = var.freeform_tags
 }
 
 resource "oci_core_internet_gateway" "this" {
-  compartment_id = var.compartment_id
+  compartment_id = var.compartment_ocid
   vcn_id         = oci_core_vcn.this.id
   enabled        = true
+  freeform_tags  = var.freeform_tags
 }
 
 ##############
@@ -49,10 +53,11 @@ resource "oci_core_internet_gateway" "this" {
 ##############
 
 resource "oci_core_route_table" "this_public" {
-  compartment_id = var.compartment_id
+  compartment_id = var.compartment_ocid
   vcn_id         = oci_core_vcn.this.id
 
-  display_name = "${var.name}-public"
+  display_name  = "${var.display_name}-public"
+  freeform_tags = var.freeform_tags
 
   route_rules {
     destination       = "0.0.0.0/0"
@@ -62,10 +67,11 @@ resource "oci_core_route_table" "this_public" {
 }
 
 resource "oci_core_route_table" "this_private" {
-  compartment_id = var.compartment_id
+  compartment_id = var.compartment_ocid
   vcn_id         = oci_core_vcn.this.id
 
-  display_name = "${var.name}-private"
+  display_name  = "${var.display_name}-private"
+  freeform_tags = var.freeform_tags
 
   route_rules {
     destination       = "0.0.0.0/0"
@@ -84,9 +90,10 @@ resource "oci_core_route_table" "this_private" {
 ############
 
 resource "oci_core_security_list" "this_k8s" {
-  compartment_id = var.compartment_id
+  compartment_id = var.compartment_ocid
   vcn_id         = oci_core_vcn.this.id
-  display_name   = "${var.name}-k8s-api"
+  display_name   = "${var.display_name}-k8s-api"
+  freeform_tags  = var.freeform_tags
 
   # Ingress
   ingress_security_rules {
@@ -171,11 +178,12 @@ resource "oci_core_security_list" "this_k8s" {
 }
 
 resource "oci_core_subnet" "this_k8s" {
-  compartment_id = var.compartment_id
+  compartment_id = var.compartment_ocid
   vcn_id         = oci_core_vcn.this.id
   cidr_block     = var.k8s_api_cidr_block
-  display_name   = "${var.name}-k8s-api-subnet"
+  display_name   = "${var.display_name}-k8s-api-subnet"
   dns_label      = "k8s"
+  freeform_tags  = var.freeform_tags
   security_list_ids = [
     oci_core_security_list.this_k8s.id
   ]
@@ -193,9 +201,10 @@ resource "oci_core_subnet" "this_k8s" {
 ###############
 
 resource "oci_core_security_list" "this_worker" {
-  compartment_id = var.compartment_id
+  compartment_id = var.compartment_ocid
   vcn_id         = oci_core_vcn.this.id
-  display_name   = "${var.name}-worker"
+  display_name   = "${var.display_name}-worker"
+  freeform_tags  = var.freeform_tags
 
   # Ingress
   ingress_security_rules {
@@ -316,11 +325,12 @@ resource "oci_core_security_list" "this_worker" {
 }
 
 resource "oci_core_subnet" "this_worker" {
-  compartment_id = var.compartment_id
+  compartment_id = var.compartment_ocid
   vcn_id         = oci_core_vcn.this.id
   cidr_block     = var.worker_subnet_cidr_block
-  display_name   = "${var.name}-worker"
+  display_name   = "${var.display_name}-worker"
   dns_label      = "worker"
+  freeform_tags  = var.freeform_tags
   security_list_ids = [
     oci_core_security_list.this_worker.id
   ]
@@ -344,11 +354,12 @@ resource "oci_core_route_table_attachment" "this_worker" {
 ######################
 
 resource "oci_core_subnet" "this_lb" {
-  compartment_id = var.compartment_id
+  compartment_id = var.compartment_ocid
   vcn_id         = oci_core_vcn.this.id
   cidr_block     = var.lb_cidr_block
-  display_name   = "${var.name}-lb"
+  display_name   = "${var.display_name}-lb"
   dns_label      = "lb"
+  freeform_tags  = var.freeform_tags
   security_list_ids = [
     oci_core_security_list.this_lb.id
   ]
@@ -362,9 +373,10 @@ resource "oci_core_subnet" "this_lb" {
 }
 
 resource "oci_core_security_list" "this_lb" {
-  compartment_id = var.compartment_id
+  compartment_id = var.compartment_ocid
   vcn_id         = oci_core_vcn.this.id
-  display_name   = "${var.name}-lb"
+  display_name   = "${var.display_name}-lb"
+  freeform_tags  = var.freeform_tags
   # OKE updates these rules
   lifecycle {
     ignore_changes = [
@@ -384,9 +396,10 @@ resource "oci_core_route_table_attachment" "this_lb" {
 ################
 
 resource "oci_core_security_list" "this_bastion" {
-  compartment_id = var.compartment_id
+  compartment_id = var.compartment_ocid
   vcn_id         = oci_core_vcn.this.id
-  display_name   = "${var.name}-bastion"
+  display_name   = "${var.display_name}-bastion"
+  freeform_tags  = var.freeform_tags
 
   # Ingress
   ingress_security_rules {
@@ -485,11 +498,12 @@ resource "oci_core_security_list" "this_bastion" {
 }
 
 resource "oci_core_subnet" "this_bastion" {
-  compartment_id = var.compartment_id
+  compartment_id = var.compartment_ocid
   vcn_id         = oci_core_vcn.this.id
   cidr_block     = var.bastion_cidr_block
-  display_name   = "${var.name}-bastion"
+  display_name   = "${var.display_name}-bastion"
   dns_label      = "bastion"
+  freeform_tags  = var.freeform_tags
   security_list_ids = [
     oci_core_security_list.this_bastion.id
   ]

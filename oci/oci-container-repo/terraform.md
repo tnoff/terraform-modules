@@ -26,11 +26,11 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_compartment_id"></a> [compartment\_id](#input\_compartment\_id) | OCID of compartment for container repo | `string` | n/a | yes |
-| <a name="input_freeform_tags"></a> [freeform\_tags](#input\_freeform\_tags) | Freeform tags to add | `map(string)` | n/a | yes |
+| <a name="input_compartment_ocid"></a> [compartment\_ocid](#input\_compartment\_ocid) | OCID of compartment for container repo | `string` | n/a | yes |
+| <a name="input_display_name"></a> [display\_name](#input\_display\_name) | Name for container repo | `string` | n/a | yes |
+| <a name="input_freeform_tags"></a> [freeform\_tags](#input\_freeform\_tags) | Freeform tags to add | `map(any)` | `{}` | no |
 | <a name="input_is_immutable"></a> [is\_immutable](#input\_is\_immutable) | If artifacts can be overriden | `bool` | `false` | no |
 | <a name="input_is_public"></a> [is\_public](#input\_is\_public) | If repo is publically available | `bool` | `false` | no |
-| <a name="input_name"></a> [name](#input\_name) | Name for container repo | `string` | n/a | yes |
 | <a name="input_readme_text"></a> [readme\_text](#input\_readme\_text) | Readme text | `string` | n/a | yes |
 
 ## Outputs

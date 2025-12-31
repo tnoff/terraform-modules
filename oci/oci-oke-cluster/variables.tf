@@ -1,19 +1,19 @@
-variable "compartment_id" {
+variable "compartment_ocid" {
   type        = string
   description = "Comaprtment OCID for cluster"
 }
 
-variable "name" {
+variable "display_name" {
   type        = string
   description = "Container Engine cluster name"
 }
 
-variable "vcn_id" {
+variable "vcn_ocid" {
   type        = string
   description = "Virtual Cloud Network OCID for cluster"
 }
 
-variable "api_subnet_id" {
+variable "api_subnet_ocid" {
   type        = string
   description = "Subnet OCID for Cluster Endpoint"
 }
@@ -24,10 +24,10 @@ variable "enable_public_endpoint" {
   description = "Enable public endpoint on K8s API"
 }
 
-variable "lb_subnet_ids" {
+variable "lb_subnet_ocids" {
   type        = list(string)
   default     = []
-  description = "Subnet IDs for service lbs"
+  description = "Subnet OCIDs for service lbs"
 }
 
 
@@ -37,7 +37,7 @@ variable "kubernetes_version" {
   description = "Kubernetes version for cluster"
 }
 
-variable "kms_key_id" {
+variable "kms_key_ocid" {
   type        = string
   description = "KMS Key OCID to use for OKE encryption"
 }

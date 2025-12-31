@@ -1,4 +1,4 @@
-variable "compartment_id" {
+variable "compartment_ocid" {
   type        = string
   description = "Comaprtment OCID for cluster"
 }
@@ -8,12 +8,12 @@ variable "cluster_ocid" {
   description = "OKE Cluster OCID"
 }
 
-variable "kms_key_id" {
+variable "kms_key_ocid" {
   type        = string
   description = "OCID of KMS Key Id to use for nodes"
 }
 
-variable "name" {
+variable "display_name" {
   type        = string
   description = "Container Engine cluster name"
 }
@@ -24,7 +24,7 @@ variable "kubernetes_version" {
   description = "Kubernetes version for cluster"
 }
 
-variable "image_id" {
+variable "image_ocid" {
   type        = string
   default     = null
   description = "Image OCID for node pools"
@@ -40,7 +40,7 @@ variable "availability_domain" {
   description = "Avaibility Domain for node pools"
 }
 
-variable "worker_pool_subnet_id" {
+variable "worker_pool_subnet_ocid" {
   type        = string
   description = "Subnet OCID for Node Pools"
 }

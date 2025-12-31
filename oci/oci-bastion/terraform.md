@@ -28,9 +28,9 @@ No modules.
 |------|-------------|------|---------|:--------:|
 | <a name="input_allowed_cidrs"></a> [allowed\_cidrs](#input\_allowed\_cidrs) | List of allowed CIDRs to connect to bastion | `list(string)` | <pre>[<br/>  "0.0.0.0/0"<br/>]</pre> | no |
 | <a name="input_compartment_ocid"></a> [compartment\_ocid](#input\_compartment\_ocid) | OCID where bastion resides | `string` | n/a | yes |
+| <a name="input_display_name"></a> [display\_name](#input\_display\_name) | Name of bastion | `string` | n/a | yes |
 | <a name="input_freeform_tags"></a> [freeform\_tags](#input\_freeform\_tags) | Tags to add to bastion | `map(any)` | `{}` | no |
-| <a name="input_name"></a> [name](#input\_name) | Name of bastion | `string` | n/a | yes |
-| <a name="input_target_subnet_id"></a> [target\_subnet\_id](#input\_target\_subnet\_id) | OCID of subnet where bastion connects to | `string` | n/a | yes |
+| <a name="input_target_subnet_ocid"></a> [target\_subnet\_ocid](#input\_target\_subnet\_ocid) | OCID of subnet where bastion connects to | `string` | n/a | yes |
 
 ## Outputs
 

@@ -26,7 +26,8 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_name"></a> [name](#input\_name) | Name of compartment and other resources | `string` | n/a | yes |
+| <a name="input_display_name"></a> [display\_name](#input\_display\_name) | Name of compartment and other resources | `string` | n/a | yes |
+| <a name="input_freeform_tags"></a> [freeform\_tags](#input\_freeform\_tags) | Freeform tags for compartment | `map(any)` | `{}` | no |
 | <a name="input_tenancy_ocid"></a> [tenancy\_ocid](#input\_tenancy\_ocid) | OCI Tenancy OCID | `string` | n/a | yes |
 
 ## Outputs
