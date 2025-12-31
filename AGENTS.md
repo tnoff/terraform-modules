@@ -112,7 +112,7 @@ Most modules use a consistent pattern where the primary resource is named `this`
 - `var.name` prefix pattern - Many OCI resources append "-cluster", "-pool", etc. to base names
 
 ### GitHub Modules
-- `github-repo`: Creates repositories with sensible defaults (no merge commits, delete branch on merge, vulnerability alerts enabled)
+- `repo`: Creates repositories with sensible defaults (no merge commits, delete branch on merge, vulnerability alerts enabled)
 - Supports dynamic injection of action secrets, variables, labels, and topics via `for_each` loops
 - Includes branch protection via repository rulesets
 
