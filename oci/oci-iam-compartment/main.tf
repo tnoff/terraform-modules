@@ -1,5 +1,6 @@
 resource "oci_identity_compartment" "this" {
   compartment_id = var.tenancy_ocid
-  description    = "${var.name} compartment"
-  name           = var.name
+  description    = "${var.display_name} compartment"
+  name           = var.display_name
+  freeform_tags  = var.freeform_tags
 }

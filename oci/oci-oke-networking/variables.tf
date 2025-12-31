@@ -1,9 +1,9 @@
-variable "compartment_id" {
+variable "compartment_ocid" {
   type        = string
   description = "Comaprtment OCID"
 }
 
-variable "name" {
+variable "display_name" {
   type        = string
   description = "Name prefix for all resources"
 }
@@ -37,4 +37,10 @@ variable "bastion_cidr_block" {
   type        = string
   default     = "10.0.30.0/24"
   description = "CIDR block for bastion hosts"
+}
+
+variable "freeform_tags" {
+  type        = map(any)
+  default     = {}
+  description = "Freeform tags for networking resources"
 }

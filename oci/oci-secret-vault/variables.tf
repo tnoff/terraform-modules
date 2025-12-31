@@ -1,9 +1,9 @@
-variable "compartment_id" {
+variable "compartment_ocid" {
   type        = string
   description = "OCID of compartment for vault"
 }
 
-variable "name" {
+variable "display_name" {
   type        = string
   description = "Name of vault"
 }
@@ -20,7 +20,7 @@ variable "key_shape_length" {
   description = "Key shape length"
 }
 
-variable "tags" {
+variable "freeform_tags" {
   type        = map(any)
   default     = {}
   description = "Freeform tags for vault and key"

@@ -2,8 +2,8 @@
 
 resource "oci_containerengine_node_pool" "this" {
   cluster_id         = var.cluster_ocid
-  compartment_id     = var.compartment_id
-  name               = "${var.name}-node-pool"
+  compartment_id     = var.compartment_ocid
+  name               = "${var.display_name}-node-pool"
   node_shape         = var.node_shape
   kubernetes_version = "v${var.kubernetes_version}"
 
@@ -17,16 +17,16 @@ resource "oci_containerengine_node_pool" "this" {
 
   freeform_tags = var.freeform_tags
   node_config_details {
-    kms_key_id = var.kms_key_id
+    kms_key_id = var.kms_key_ocid
     placement_configs {
       availability_domain = var.availability_domain
-      subnet_id           = var.worker_pool_subnet_id
+      subnet_id           = var.worker_pool_subnet_ocid
     }
     size          = var.node_pool_size
     freeform_tags = var.instance_tags
     node_pool_pod_network_option_details {
       cni_type       = "OCI_VCN_IP_NATIVE"
-      pod_subnet_ids = [var.worker_pool_subnet_id]
+      pod_subnet_ids = [var.worker_pool_subnet_ocid]
     }
   }
   node_shape_config {
@@ -34,7 +34,7 @@ resource "oci_containerengine_node_pool" "this" {
     ocpus         = var.num_ocpus
   }
   node_source_details {
-    image_id    = var.image_id
+    image_id    = var.image_ocid
     source_type = "image"
 
     boot_volume_size_in_gbs = 50

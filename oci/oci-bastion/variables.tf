@@ -3,12 +3,12 @@ variable "compartment_ocid" {
   description = "OCID where bastion resides"
 }
 
-variable "target_subnet_id" {
+variable "target_subnet_ocid" {
   type        = string
   description = "OCID of subnet where bastion connects to"
 }
 
-variable "name" {
+variable "display_name" {
   type        = string
   description = "Name of bastion"
 }

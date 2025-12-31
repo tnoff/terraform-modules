@@ -1,4 +1,4 @@
-variable "compartment_id" {
+variable "compartment_ocid" {
   type        = string
   description = "Compartment OCID for bucket"
 }
@@ -8,12 +8,12 @@ variable "namespace" {
   description = "Object storage namespace for bucket"
 }
 
-variable "name" {
+variable "display_name" {
   type        = string
   description = "Name for bucket"
 }
 
-variable "kms_key_id" {
+variable "kms_key_ocid" {
   type        = string
   description = "KMS Key OCID"
 }
@@ -54,7 +54,7 @@ variable "delete_previous_versions_after" {
   description = "Delete previous object versions after X days, if 0 does not set (only applies when versioning is enabled)"
 }
 
-variable "tags" {
+variable "freeform_tags" {
   type        = map(any)
   default     = {}
   description = "Extra freeform tags for bucket"

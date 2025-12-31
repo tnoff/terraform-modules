@@ -49,11 +49,11 @@ locals {
 }
 
 resource "oci_objectstorage_bucket" "this" {
-  compartment_id = var.compartment_id
-  name           = var.name
+  compartment_id = var.compartment_ocid
+  name           = var.display_name
   namespace      = var.namespace
-  freeform_tags  = var.tags
-  kms_key_id     = var.kms_key_id
+  freeform_tags  = var.freeform_tags
+  kms_key_id     = var.kms_key_ocid
   versioning     = var.versioning_enabled ? "Enabled" : "Disabled"
 }
 
