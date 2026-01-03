@@ -1,11 +1,21 @@
 locals {
-  statements = flatten([
-    for compartment in var.compartments : [
-      for verb in var.verbs : [
-        trim("Allow group ${var.group_display_name} to ${verb} in compartment ${compartment} ${var.where_statement}", " ")
-      ]
+  compartment_statements = flatten([
+    for statement in var.compartment_policies : [
+      for verb in statement.verbs : flatten([
+        for compartment in statement.compartments : flatten([
+          trim("Allow group ${var.group_display_name} to ${verb} in compartment ${compartment} ${statement.where_clause}", " ")
+        ])
+      ])
     ]
   ])
+  tenancy_statements = flatten([
+    for statement in var.tenancy_policies : [
+      for verb in statement.verbs : flatten([
+        trim("Allow group ${var.group_display_name} to ${verb} in tenancy ${statement.where_clause}", " ")
+      ])
+    ]
+  ])
+  policy_statements = flatten(concat(local.compartment_statements, local.tenancy_statements))
 }
 
 resource "oci_identity_user" "this" {
@@ -46,10 +56,10 @@ resource "oci_identity_customer_secret_key" "this" {
 }
 
 resource "oci_identity_policy" "this" {
-  count          = length(local.statements) > 0 ? 1 : 0
+  count          = length(local.policy_statements) > 0 ? 1 : 0
   compartment_id = var.tenancy_ocid
   description    = "${var.user_display_name} policies"
   name           = "${var.user_display_name}-policy"
-  statements     = local.statements
+  statements     = local.policy_statements
   freeform_tags  = var.freeform_tags
 }
