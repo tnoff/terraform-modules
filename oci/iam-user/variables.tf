@@ -13,27 +13,29 @@ variable "group_display_name" {
   description = "Name of group for user"
 }
 
-variable "compartments" {
-  type        = list(string)
-  description = "List of compartment OCIDs for verbs"
+variable "compartment_policies" {
+  type = list(object({
+    compartments = list(string)
+    verbs        = list(string)
+    where_clause = string
+  }))
+  default     = []
+  description = "Handler around setting IAM policies for user"
 }
 
-variable "verbs" {
-  type        = list(string)
-  description = "List of verbs to allow, such as 'manage object-family'"
+variable "tenancy_policies" {
+  type = list(object({
+    verbs        = list(string)
+    where_clause = string
+  }))
   default     = []
+  description = "Handler around setting IAM policies for user"
 }
 
 variable "enable_auth_token" {
   type        = bool
   default     = true
   description = "Enable auth token for user"
-}
-
-variable "where_statement" {
-  type        = string
-  default     = ""
-  description = "Where statement to add to policies, such as limiting access to one bucket"
 }
 
 variable "user_public_key" {
