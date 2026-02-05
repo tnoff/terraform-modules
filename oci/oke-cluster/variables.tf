@@ -45,5 +45,11 @@ variable "kms_key_ocid" {
 variable "freeform_tags" {
   type        = map(any)
   default     = {}
-  description = "Tags for created block volumes/load balancers"
+  description = "Freeform tags for cluster and persistent volumes"
+}
+
+variable "defined_tags" {
+  type        = map(string)
+  default     = {}
+  description = "Defined tags for cluster and persistent volumes"
 }

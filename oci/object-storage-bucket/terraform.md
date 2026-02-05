@@ -32,6 +32,7 @@ No modules.
 | <a name="input_archive_after"></a> [archive\_after](#input\_archive\_after) | Delete objects in bucket after X days, if 0 does not set | `number` | `30` | no |
 | <a name="input_archive_previous_versions_after"></a> [archive\_previous\_versions\_after](#input\_archive\_previous\_versions\_after) | Archive previous object versions after X days, if 0 does not set (only applies when versioning is enabled) | `number` | `0` | no |
 | <a name="input_compartment_ocid"></a> [compartment\_ocid](#input\_compartment\_ocid) | Compartment OCID for bucket | `string` | n/a | yes |
+| <a name="input_defined_tags"></a> [defined\_tags](#input\_defined\_tags) | Defined tags for bucket | `map(string)` | `{}` | no |
 | <a name="input_delete_after"></a> [delete\_after](#input\_delete\_after) | Delete objects in bucket after X days, if 0 does not set | `number` | `0` | no |
 | <a name="input_delete_previous_versions_after"></a> [delete\_previous\_versions\_after](#input\_delete\_previous\_versions\_after) | Delete previous object versions after X days, if 0 does not set (only applies when versioning is enabled) | `number` | `0` | no |
 | <a name="input_display_name"></a> [display\_name](#input\_display\_name) | Name for bucket | `string` | n/a | yes |

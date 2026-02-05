@@ -68,16 +68,28 @@ variable "tenancy_ocid" {
   description = "Tenancy OCID, for image lookup"
 }
 
-variable "instance_tags" {
+variable "instance_freeform_tags" {
   type        = map(any)
   default     = {}
-  description = "Tags for node pool instances"
+  description = "Freeform tags for node pool instances"
+}
+
+variable "instance_defined_tags" {
+  type        = map(string)
+  default     = {}
+  description = "Defined tags for node pool instances"
 }
 
 variable "freeform_tags" {
   type        = map(any)
   default     = {}
-  description = "Tags for created block volumes/load balancers"
+  description = "Freeform tags for node pool"
+}
+
+variable "defined_tags" {
+  type        = map(string)
+  default     = {}
+  description = "Defined tags for node pool"
 }
 
 variable "node_shape" {

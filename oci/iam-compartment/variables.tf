@@ -13,3 +13,9 @@ variable "freeform_tags" {
   default     = {}
   description = "Freeform tags for compartment"
 }
+
+variable "defined_tags" {
+  type        = map(string)
+  default     = {}
+  description = "Defined tags for compartment"
+}

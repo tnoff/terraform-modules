@@ -33,6 +33,7 @@ No modules.
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_compartment_policies"></a> [compartment\_policies](#input\_compartment\_policies) | Handler around setting IAM policies for user | <pre>list(object({<br/>    compartments = list(string)<br/>    verbs        = list(string)<br/>    where_clause = string<br/>  }))</pre> | `[]` | no |
+| <a name="input_defined_tags"></a> [defined\_tags](#input\_defined\_tags) | Defined tags for user, group, and policy | `map(string)` | `{}` | no |
 | <a name="input_enable_auth_token"></a> [enable\_auth\_token](#input\_enable\_auth\_token) | Enable auth token for user | `bool` | `true` | no |
 | <a name="input_freeform_tags"></a> [freeform\_tags](#input\_freeform\_tags) | Freeform tags for user, group, and policy | `map(any)` | `{}` | no |
 | <a name="input_group_display_name"></a> [group\_display\_name](#input\_group\_display\_name) | Name of group for user | `string` | n/a | yes |

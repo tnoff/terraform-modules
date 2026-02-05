@@ -15,6 +15,7 @@ resource "oci_core_vcn" "this" {
   # Doesn't seem to like dashes in name
   dns_label     = replace(var.display_name, "-", "")
   freeform_tags = var.freeform_tags
+  defined_tags  = var.defined_tags
 
   lifecycle {
     ignore_changes = [
@@ -29,6 +30,7 @@ resource "oci_core_service_gateway" "this" {
   vcn_id         = oci_core_vcn.this.id
   display_name   = "${var.display_name}-all-oci-services"
   freeform_tags  = var.freeform_tags
+  defined_tags   = var.defined_tags
   services {
     service_id = local.oci_all_service_gateway[0].id
   }
@@ -39,6 +41,7 @@ resource "oci_core_nat_gateway" "this" {
   vcn_id         = oci_core_vcn.this.id
   display_name   = "${var.display_name}-nat-gateway"
   freeform_tags  = var.freeform_tags
+  defined_tags   = var.defined_tags
 }
 
 resource "oci_core_internet_gateway" "this" {
@@ -46,6 +49,7 @@ resource "oci_core_internet_gateway" "this" {
   vcn_id         = oci_core_vcn.this.id
   enabled        = true
   freeform_tags  = var.freeform_tags
+  defined_tags   = var.defined_tags
 }
 
 ##############
@@ -58,6 +62,7 @@ resource "oci_core_route_table" "this_public" {
 
   display_name  = "${var.display_name}-public"
   freeform_tags = var.freeform_tags
+  defined_tags  = var.defined_tags
 
   route_rules {
     destination       = "0.0.0.0/0"
@@ -72,6 +77,7 @@ resource "oci_core_route_table" "this_private" {
 
   display_name  = "${var.display_name}-private"
   freeform_tags = var.freeform_tags
+  defined_tags  = var.defined_tags
 
   route_rules {
     destination       = "0.0.0.0/0"
@@ -94,6 +100,7 @@ resource "oci_core_security_list" "this_k8s" {
   vcn_id         = oci_core_vcn.this.id
   display_name   = "${var.display_name}-k8s-api"
   freeform_tags  = var.freeform_tags
+  defined_tags   = var.defined_tags
 
   # Ingress
   ingress_security_rules {
@@ -184,6 +191,7 @@ resource "oci_core_subnet" "this_k8s" {
   display_name   = "${var.display_name}-k8s-api-subnet"
   dns_label      = "k8s"
   freeform_tags  = var.freeform_tags
+  defined_tags   = var.defined_tags
   security_list_ids = [
     oci_core_security_list.this_k8s.id
   ]
@@ -205,6 +213,7 @@ resource "oci_core_security_list" "this_worker" {
   vcn_id         = oci_core_vcn.this.id
   display_name   = "${var.display_name}-worker"
   freeform_tags  = var.freeform_tags
+  defined_tags   = var.defined_tags
 
   # Ingress
   ingress_security_rules {
@@ -331,6 +340,7 @@ resource "oci_core_subnet" "this_worker" {
   display_name   = "${var.display_name}-worker"
   dns_label      = "worker"
   freeform_tags  = var.freeform_tags
+  defined_tags   = var.defined_tags
   security_list_ids = [
     oci_core_security_list.this_worker.id
   ]
@@ -360,6 +370,7 @@ resource "oci_core_subnet" "this_lb" {
   display_name   = "${var.display_name}-lb"
   dns_label      = "lb"
   freeform_tags  = var.freeform_tags
+  defined_tags   = var.defined_tags
   security_list_ids = [
     oci_core_security_list.this_lb.id
   ]
@@ -377,6 +388,7 @@ resource "oci_core_security_list" "this_lb" {
   vcn_id         = oci_core_vcn.this.id
   display_name   = "${var.display_name}-lb"
   freeform_tags  = var.freeform_tags
+  defined_tags   = var.defined_tags
   # OKE updates these rules
   lifecycle {
     ignore_changes = [
@@ -400,6 +412,7 @@ resource "oci_core_security_list" "this_bastion" {
   vcn_id         = oci_core_vcn.this.id
   display_name   = "${var.display_name}-bastion"
   freeform_tags  = var.freeform_tags
+  defined_tags   = var.defined_tags
 
   # Ingress
   ingress_security_rules {
@@ -504,6 +517,7 @@ resource "oci_core_subnet" "this_bastion" {
   display_name   = "${var.display_name}-bastion"
   dns_label      = "bastion"
   freeform_tags  = var.freeform_tags
+  defined_tags   = var.defined_tags
   security_list_ids = [
     oci_core_security_list.this_bastion.id
   ]

@@ -45,6 +45,7 @@ No modules.
 |------|-------------|------|---------|:--------:|
 | <a name="input_bastion_cidr_block"></a> [bastion\_cidr\_block](#input\_bastion\_cidr\_block) | CIDR block for bastion hosts | `string` | `"10.0.30.0/24"` | no |
 | <a name="input_compartment_ocid"></a> [compartment\_ocid](#input\_compartment\_ocid) | Comaprtment OCID | `string` | n/a | yes |
+| <a name="input_defined_tags"></a> [defined\_tags](#input\_defined\_tags) | Defined tags for networking resources | `map(string)` | `{}` | no |
 | <a name="input_display_name"></a> [display\_name](#input\_display\_name) | Name prefix for all resources | `string` | n/a | yes |
 | <a name="input_freeform_tags"></a> [freeform\_tags](#input\_freeform\_tags) | Freeform tags for networking resources | `map(any)` | `{}` | no |
 | <a name="input_k8s_api_cidr_block"></a> [k8s\_api\_cidr\_block](#input\_k8s\_api\_cidr\_block) | CIDR block for private subnet | `string` | `"10.0.0.0/28"` | no |

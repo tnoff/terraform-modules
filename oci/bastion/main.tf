@@ -5,4 +5,5 @@ resource "oci_bastion_bastion" "this" {
   name                         = var.display_name
   client_cidr_block_allow_list = var.allowed_cidrs
   freeform_tags                = var.freeform_tags
+  defined_tags                 = var.defined_tags
 }

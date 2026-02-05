@@ -60,6 +60,12 @@ variable "freeform_tags" {
   description = "Extra freeform tags for bucket"
 }
 
+variable "defined_tags" {
+  type        = map(string)
+  default     = {}
+  description = "Defined tags for bucket"
+}
+
 variable "replication_destination" {
   type = object({
     bucket_name   = string,

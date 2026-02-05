@@ -55,3 +55,9 @@ variable "freeform_tags" {
   default     = {}
   description = "Freeform tags for user, group, and policy"
 }
+
+variable "defined_tags" {
+  type        = map(string)
+  default     = {}
+  description = "Defined tags for user, group, and policy"
+}

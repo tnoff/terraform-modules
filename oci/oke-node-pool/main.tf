@@ -16,6 +16,7 @@ resource "oci_containerengine_node_pool" "this" {
   }
 
   freeform_tags = var.freeform_tags
+  defined_tags  = var.defined_tags
   node_config_details {
     kms_key_id = var.kms_key_ocid
     placement_configs {
@@ -23,7 +24,8 @@ resource "oci_containerengine_node_pool" "this" {
       subnet_id           = var.worker_pool_subnet_ocid
     }
     size          = var.node_pool_size
-    freeform_tags = var.instance_tags
+    freeform_tags = var.instance_freeform_tags
+    defined_tags  = var.instance_defined_tags
     node_pool_pod_network_option_details {
       cni_type       = "OCI_VCN_IP_NATIVE"
       pod_subnet_ids = [var.worker_pool_subnet_ocid]

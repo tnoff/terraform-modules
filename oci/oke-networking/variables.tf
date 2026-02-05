@@ -44,3 +44,9 @@ variable "freeform_tags" {
   default     = {}
   description = "Freeform tags for networking resources"
 }
+
+variable "defined_tags" {
+  type        = map(string)
+  default     = {}
+  description = "Defined tags for networking resources"
+}

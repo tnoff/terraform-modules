@@ -53,6 +53,7 @@ resource "oci_objectstorage_bucket" "this" {
   name           = var.display_name
   namespace      = var.namespace
   freeform_tags  = var.freeform_tags
+  defined_tags   = var.defined_tags
   kms_key_id     = var.kms_key_ocid
   versioning     = var.versioning_enabled ? "Enabled" : "Disabled"
 }
