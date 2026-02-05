@@ -28,6 +28,7 @@ No modules.
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_compartment_ocid"></a> [compartment\_ocid](#input\_compartment\_ocid) | OCID of compartment for vault | `string` | n/a | yes |
+| <a name="input_defined_tags"></a> [defined\_tags](#input\_defined\_tags) | Defined tags for vault and key | `map(string)` | `{}` | no |
 | <a name="input_display_name"></a> [display\_name](#input\_display\_name) | Name of vault | `string` | n/a | yes |
 | <a name="input_freeform_tags"></a> [freeform\_tags](#input\_freeform\_tags) | Freeform tags for vault and key | `map(any)` | `{}` | no |
 | <a name="input_key_shape_algorithm"></a> [key\_shape\_algorithm](#input\_key\_shape\_algorithm) | Key shape algorithm | `string` | `"AES"` | no |

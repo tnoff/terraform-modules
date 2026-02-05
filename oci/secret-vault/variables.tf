@@ -26,6 +26,12 @@ variable "freeform_tags" {
   description = "Freeform tags for vault and key"
 }
 
+variable "defined_tags" {
+  type        = map(string)
+  default     = {}
+  description = "Defined tags for vault and key"
+}
+
 variable "protection_mode" {
   type        = string
   default     = "SOFTWARE"

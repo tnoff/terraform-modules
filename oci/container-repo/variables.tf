@@ -11,7 +11,13 @@ variable "display_name" {
 variable "freeform_tags" {
   type        = map(any)
   default     = {}
-  description = "Freeform tags to add"
+  description = "Freeform tags for container repository"
+}
+
+variable "defined_tags" {
+  type        = map(string)
+  default     = {}
+  description = "Defined tags for container repository"
 }
 
 variable "is_immutable" {

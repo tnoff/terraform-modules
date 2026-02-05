@@ -3,4 +3,5 @@ resource "oci_identity_compartment" "this" {
   description    = "${var.display_name} compartment"
   name           = var.display_name
   freeform_tags  = var.freeform_tags
+  defined_tags   = var.defined_tags
 }

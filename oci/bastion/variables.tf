@@ -16,7 +16,13 @@ variable "display_name" {
 variable "freeform_tags" {
   type        = map(any)
   default     = {}
-  description = "Tags to add to bastion"
+  description = "Freeform tags for bastion"
+}
+
+variable "defined_tags" {
+  type        = map(string)
+  default     = {}
+  description = "Defined tags for bastion"
 }
 
 variable "allowed_cidrs" {

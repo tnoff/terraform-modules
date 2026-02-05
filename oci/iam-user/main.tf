@@ -23,6 +23,7 @@ resource "oci_identity_user" "this" {
   description    = var.user_display_name
   name           = var.user_display_name
   freeform_tags  = var.freeform_tags
+  defined_tags   = var.defined_tags
 }
 
 resource "oci_identity_group" "this" {
@@ -30,6 +31,7 @@ resource "oci_identity_group" "this" {
   description    = "${var.group_display_name} group"
   name           = var.group_display_name
   freeform_tags  = var.freeform_tags
+  defined_tags   = var.defined_tags
 }
 
 resource "oci_identity_user_group_membership" "this" {
@@ -62,4 +64,5 @@ resource "oci_identity_policy" "this" {
   name           = "${var.user_display_name}-policy"
   statements     = local.policy_statements
   freeform_tags  = var.freeform_tags
+  defined_tags   = var.defined_tags
 }
