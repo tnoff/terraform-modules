@@ -30,6 +30,7 @@ No modules.
 | <a name="input_cluster_ocid"></a> [cluster\_ocid](#input\_cluster\_ocid) | OKE Cluster OCID | `string` | n/a | yes |
 | <a name="input_compartment_ocid"></a> [compartment\_ocid](#input\_compartment\_ocid) | Comaprtment OCID for cluster | `string` | n/a | yes |
 | <a name="input_defined_tags"></a> [defined\_tags](#input\_defined\_tags) | Defined tags for node pool | `map(string)` | `{}` | no |
+| <a name="input_disable_osms"></a> [disable\_osms](#input\_disable\_osms) | Disable Oracle OS Management Service agent on nodes (prevents dnf auto-updates that can cause OOM) | `bool` | `false` | no |
 | <a name="input_display_name"></a> [display\_name](#input\_display\_name) | Container Engine cluster name | `string` | n/a | yes |
 | <a name="input_freeform_tags"></a> [freeform\_tags](#input\_freeform\_tags) | Freeform tags for node pool | `map(any)` | `{}` | no |
 | <a name="input_image_ocid"></a> [image\_ocid](#input\_image\_ocid) | Image OCID for node pools | `string` | `null` | no |
@@ -39,6 +40,7 @@ No modules.
 | <a name="input_kubernetes_version"></a> [kubernetes\_version](#input\_kubernetes\_version) | Kubernetes version for cluster | `string` | `"1.33.0"` | no |
 | <a name="input_memory_in_gbs"></a> [memory\_in\_gbs](#input\_memory\_in\_gbs) | Memory for each node in node pool | `number` | `6` | no |
 | <a name="input_node_labels"></a> [node\_labels](#input\_node\_labels) | Kubernetes node labels | `map(any)` | `{}` | no |
+| <a name="input_node_metadata"></a> [node\_metadata](#input\_node\_metadata) | Additional metadata key/value pairs to add to each node instance | `map(string)` | `{}` | no |
 | <a name="input_node_pool_size"></a> [node\_pool\_size](#input\_node\_pool\_size) | Node pool size | `number` | `1` | no |
 | <a name="input_node_shape"></a> [node\_shape](#input\_node\_shape) | Desired node shape | `string` | `"VM.Standard.A1.Flex"` | no |
 | <a name="input_num_ocpus"></a> [num\_ocpus](#input\_num\_ocpus) | OCPUs for each node in node pool | `number` | `1` | no |

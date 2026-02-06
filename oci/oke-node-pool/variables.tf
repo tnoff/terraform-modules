@@ -103,3 +103,15 @@ variable "node_labels" {
   default     = {}
   description = "Kubernetes node labels"
 }
+
+variable "disable_osms" {
+  type        = bool
+  default     = false
+  description = "Disable Oracle OS Management Service agent on nodes (prevents dnf auto-updates that can cause OOM)"
+}
+
+variable "node_metadata" {
+  type        = map(string)
+  default     = {}
+  description = "Additional metadata key/value pairs to add to each node instance"
+}

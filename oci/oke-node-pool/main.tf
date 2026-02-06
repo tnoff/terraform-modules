@@ -1,4 +1,20 @@
-# Get all container image options for cluster
+# Cloud-init script to disable OSMS agent
+# This prevents dnf auto-updates that can consume 3-4GB RAM and trigger OOM kills
+locals {
+  disable_osms_cloud_init = var.disable_osms ? base64encode(<<-EOF
+    #!/bin/bash
+    # Disable OSMS agent to prevent memory-hungry dnf updates
+    systemctl disable --now osms-agent oracle-cloud-agent-updater
+    # Stop any running dnf processes
+    pkill -9 dnf || true
+    EOF
+  ) : null
+
+  node_metadata = var.disable_osms ? merge(
+    var.node_metadata,
+    { user_data = local.disable_osms_cloud_init }
+  ) : var.node_metadata
+}
 
 resource "oci_containerengine_node_pool" "this" {
   cluster_id         = var.cluster_ocid
@@ -17,6 +33,8 @@ resource "oci_containerengine_node_pool" "this" {
 
   freeform_tags = var.freeform_tags
   defined_tags  = var.defined_tags
+  node_metadata = local.node_metadata
+
   node_config_details {
     kms_key_id = var.kms_key_ocid
     placement_configs {
