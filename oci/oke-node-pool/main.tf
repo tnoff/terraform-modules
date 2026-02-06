@@ -1,13 +1,18 @@
-# Cloud-init script to disable OSMS agent
-# This prevents dnf auto-updates that can consume 3-4GB RAM and trigger OOM kills
+# Cloud-init script that runs OKE initialization then disables OSMS agent
+# OSMS disabling prevents dnf auto-updates that can consume 3-4GB RAM and trigger OOM kills
+# IMPORTANT: Must include the default OKE init script or nodes won't join the cluster
 locals {
   disable_osms_cloud_init = var.disable_osms ? base64encode(<<-EOF
-    #!/bin/bash
-    # Disable OSMS agent to prevent memory-hungry dnf updates
-    systemctl disable --now osms-agent oracle-cloud-agent-updater
-    # Stop any running dnf processes
-    pkill -9 dnf || true
-    EOF
+#!/bin/bash
+# First, run the default OKE initialization script (required for node to join cluster)
+curl --fail -H "Authorization: Bearer Oracle" -L0 http://169.254.169.254/opc/v2/instance/metadata/oke_init_script | base64 --decode >/var/run/oke-init.sh
+bash /var/run/oke-init.sh
+
+# Now disable OSMS agent to prevent memory-hungry dnf updates
+systemctl disable --now osms-agent oracle-cloud-agent-updater || true
+# Stop any running dnf processes
+pkill -9 dnf || true
+EOF
   ) : null
 
   node_metadata = var.disable_osms ? merge(
