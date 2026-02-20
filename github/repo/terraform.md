@@ -35,6 +35,7 @@ No modules.
 |------|-------------|------|---------|:--------:|
 | <a name="input_action_secrets"></a> [action\_secrets](#input\_action\_secrets) | Key/Value pair for action secrets | `map(any)` | `{}` | no |
 | <a name="input_action_variables"></a> [action\_variables](#input\_action\_variables) | Key/Value pair for action variables | `map(any)` | `{}` | no |
+| <a name="input_allow_auto_merge"></a> [allow\_auto\_merge](#input\_allow\_auto\_merge) | Allow auto-merge on pull requests | `bool` | `false` | no |
 | <a name="input_default_branch"></a> [default\_branch](#input\_default\_branch) | Name of default branch | `string` | `"main"` | no |
 | <a name="input_is_public"></a> [is\_public](#input\_is\_public) | Is repository public | `bool` | `true` | no |
 | <a name="input_repo_description"></a> [repo\_description](#input\_repo\_description) | Description for repository | `string` | n/a | yes |

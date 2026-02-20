@@ -3,6 +3,7 @@ resource "github_repository" "this" {
   description = var.repo_description
 
   visibility             = var.is_public == true ? "public" : "private"
+  allow_auto_merge       = var.allow_auto_merge
   allow_merge_commit     = false
   delete_branch_on_merge = true
   vulnerability_alerts   = true
