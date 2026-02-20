@@ -49,3 +49,9 @@ variable "required_status_checks" {
   default     = []
   description = "List of default status checks that must pass before merge"
 }
+
+variable "allow_auto_merge" {
+  type        = bool
+  default     = false
+  description = "Allow auto-merge on pull requests"
+}
