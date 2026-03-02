@@ -26,6 +26,12 @@ variable "action_variables" {
   description = "Key/Value pair for action variables"
 }
 
+variable "dependabot_secrets" {
+  type        = map(any)
+  default     = {}
+  description = "Key/Value pair for depenabot secrets"
+}
+
 variable "topics" {
   type        = list(string)
   default     = []
