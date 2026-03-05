@@ -34,6 +34,13 @@ resource "github_actions_variable" "this" {
   value         = each.value
 }
 
+resource "github_repository_collaborator" "this" {
+  for_each   = tomap(var.collaborators)
+  repository = github_repository.this.name
+  username   = each.key
+  permission = each.value
+}
+
 resource "github_issue_label" "test_repo" {
   for_each   = tomap(var.repo_labels)
   repository = github_repository.this.name

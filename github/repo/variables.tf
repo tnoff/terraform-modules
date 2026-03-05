@@ -62,6 +62,12 @@ variable "allow_auto_merge" {
   description = "Allow auto-merge on pull requests"
 }
 
+variable "collaborators" {
+  type        = map(string)
+  default     = {}
+  description = "Map of GitHub username to permission level for repository collaborators. Valid permissions: pull, triage, push, maintain, admin"
+}
+
 variable "bypass_actors" {
   type = list(object({
     actor_id    = number

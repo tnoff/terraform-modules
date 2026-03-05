@@ -27,6 +27,7 @@ No modules.
 | [github_dependabot_secret.this](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/dependabot_secret) | resource |
 | [github_issue_label.test_repo](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/issue_label) | resource |
 | [github_repository.this](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository) | resource |
+| [github_repository_collaborator.this](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository_collaborator) | resource |
 | [github_repository_ruleset.this](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository_ruleset) | resource |
 | [github_repository_topics.this](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository_topics) | resource |
 
@@ -38,6 +39,7 @@ No modules.
 | <a name="input_action_variables"></a> [action\_variables](#input\_action\_variables) | Key/Value pair for action variables | `map(any)` | `{}` | no |
 | <a name="input_allow_auto_merge"></a> [allow\_auto\_merge](#input\_allow\_auto\_merge) | Allow auto-merge on pull requests | `bool` | `false` | no |
 | <a name="input_bypass_actors"></a> [bypass\_actors](#input\_bypass\_actors) | List of actors that can bypass branch protection rules. Each object requires actor\_id, actor\_type (RepositoryRole, Team, Integration, OrganizationAdmin), and bypass\_mode (always, pull\_request). Note: individual users are not a supported actor\_type - bypassing by user is not possible via rulesets. For personal repos, the repo owner already bypasses rules via the built-in Admin role (actor\_id=5, RepositoryRole), which is always included. Team and OrganizationAdmin types require an org repo. | <pre>list(object({<br/>    actor_id    = number<br/>    actor_type  = string<br/>    bypass_mode = string<br/>  }))</pre> | `[]` | no |
+| <a name="input_collaborators"></a> [collaborators](#input\_collaborators) | Map of GitHub username to permission level for repository collaborators. Valid permissions: pull, triage, push, maintain, admin | `map(string)` | `{}` | no |
 | <a name="input_default_branch"></a> [default\_branch](#input\_default\_branch) | Name of default branch | `string` | `"main"` | no |
 | <a name="input_dependabot_secrets"></a> [dependabot\_secrets](#input\_dependabot\_secrets) | Key/Value pair for depenabot secrets | `map(any)` | `{}` | no |
 | <a name="input_is_public"></a> [is\_public](#input\_is\_public) | Is repository public | `bool` | `true` | no |
