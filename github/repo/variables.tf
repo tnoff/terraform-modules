@@ -61,3 +61,13 @@ variable "allow_auto_merge" {
   default     = false
   description = "Allow auto-merge on pull requests"
 }
+
+variable "bypass_actors" {
+  type = list(object({
+    actor_id    = number
+    actor_type  = string
+    bypass_mode = string
+  }))
+  default     = []
+  description = "List of actors that can bypass branch protection rules. Each object requires actor_id, actor_type (RepositoryRole, Team, Integration, OrganizationAdmin), and bypass_mode (always, pull_request). Note: individual users are not a supported actor_type - bypassing by user is not possible via rulesets. For personal repos, the repo owner already bypasses rules via the built-in Admin role (actor_id=5, RepositoryRole), which is always included. Team and OrganizationAdmin types require an org repo."
+}
