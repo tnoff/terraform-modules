@@ -34,6 +34,13 @@ resource "github_actions_variable" "this" {
   value         = each.value
 }
 
+resource "github_repository_collaborator" "this" {
+  for_each   = tomap(var.collaborators)
+  repository = github_repository.this.name
+  username   = each.key
+  permission = each.value
+}
+
 resource "github_issue_label" "test_repo" {
   for_each   = tomap(var.repo_labels)
   repository = github_repository.this.name
@@ -75,6 +82,15 @@ resource "github_repository_ruleset" "this" {
     actor_id    = 5 # Repository admin
     actor_type  = "RepositoryRole"
     bypass_mode = "always"
+  }
+
+  dynamic "bypass_actors" {
+    for_each = var.bypass_actors
+    content {
+      actor_id    = bypass_actors.value.actor_id
+      actor_type  = bypass_actors.value.actor_type
+      bypass_mode = bypass_actors.value.bypass_mode
+    }
   }
 
   rules {
