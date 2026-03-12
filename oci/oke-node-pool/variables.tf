@@ -104,10 +104,32 @@ variable "node_labels" {
   description = "Kubernetes node labels"
 }
 
-variable "disable_osms" {
+variable "limit_osms_memory" {
   type        = bool
   default     = false
-  description = "Disable Oracle OS Management Service agent on nodes (prevents dnf auto-updates that can cause OOM)"
+  description = "Mitigate dnf OOM risk by adding a swap file and capping OSMS agent memory via systemd. Keeps OSMS active for security patching while preventing runaway dnf from exhausting node memory."
+}
+
+variable "osms_swap_size_gb" {
+  type        = number
+  default     = 2
+  description = "Size in GB of the swap file created on each node when limit_osms_memory is enabled."
+
+  validation {
+    condition     = var.osms_swap_size_gb >= 1 && var.osms_swap_size_gb <= 16
+    error_message = "osms_swap_size_gb must be between 1 and 16."
+  }
+}
+
+variable "osms_memory_limit_mb" {
+  type        = number
+  default     = 512
+  description = "Hard memory cap (MB) applied to the osms-agent systemd service when limit_osms_memory is enabled. If dnf exceeds this, the OS kills dnf rather than pods."
+
+  validation {
+    condition     = var.osms_memory_limit_mb >= 256 && var.osms_memory_limit_mb <= 4096
+    error_message = "osms_memory_limit_mb must be between 256 and 4096."
+  }
 }
 
 variable "node_metadata" {
