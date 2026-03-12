@@ -24,21 +24,14 @@ The OOM killer targets Kubernetes pods (which run as BestEffort QoS without reso
 
 ## The Solution
 
-This module includes a `disable_osms` variable that:
+This module includes a `limit_osms_memory` variable that applies two mitigations at node boot via cloud-init:
 
-1. Runs the required OKE initialization script (installs kubelet, joins cluster)
-2. Disables `osms-agent` and `oracle-cloud-agent-updater` services
-3. Kills any running `dnf` processes
+1. **Swap file** — adds a configurable swap file (default 2GB) so `dnf` memory spikes have an overflow buffer rather than immediately exhausting RAM.
+2. **systemd memory cap** — sets `MemoryMax` on `osms-agent.service` (default 512MB) so that if `dnf` exceeds the cap, the OS kills the `dnf` process rather than Kubernetes pods.
 
-### Why This Is Safe for OKE
+`MemorySwapMax=0` is also set on the cgroup so the swap is reserved for pod workloads, not OSMS.
 
-Oracle's own documentation recommends **node cycling** over in-place patching for OKE worker nodes:
-
-> "Users should not patch, update, or otherwise modify [OKE nodes] directly for security fixes or any other purposes."
-
-Security updates should be applied by:
-1. Updating the node pool to use a newer OKE image
-2. Cycling the nodes to pick up the new image
+This approach keeps OSMS active for security patching (unlike a hard disable) while preventing runaway `dnf` from destabilising the node.
 
 ## Usage
 
@@ -48,9 +41,17 @@ module "oke_node_pool" {
 
   # ... other configuration ...
 
-  disable_osms = true  # Prevents OOM from dnf updates
+  limit_osms_memory    = true   # enable swap + memory cap mitigations
+  osms_swap_size_gb    = 2      # optional, default 2
+  osms_memory_limit_mb = 512    # optional, default 512
 }
 ```
+
+## Why Not Just Disable OSMS?
+
+Disabling OSMS entirely blocks in-place OS security patches. While Oracle's documentation recommends node cycling over in-place patching, disabling OSMS also stops `oracle-cloud-agent-updater` and any other agents relying on the same service, which is a broader blast radius than needed.
+
+The memory cap approach is more surgical: OSMS continues to run and deliver patches, but `dnf` is constrained so it cannot starve pod workloads.
 
 ## Why Cloud-Init Instead of Terraform Settings?
 
@@ -63,12 +64,11 @@ The OCI Console UI allows you to toggle OSMS/Oracle Cloud Agent settings on node
 
 This is a gap in the [terraform-provider-oci](https://github.com/oracle/terraform-provider-oci/issues). Until Oracle adds support, the cloud-init approach is the only way to manage this via Infrastructure as Code.
 
-The cloud-init method is arguably better anyway - it disables OSMS before the service even starts, whereas a Terraform setting might allow OSMS to run briefly during node initialization.
-
 ## References
 
 - [Bug 1907030 - dnf update runs out of memory on swapless machines](https://bugzilla.redhat.com/show_bug.cgi?id=1907030)
 - [OCI OOM killing dnf on compute instances](https://community.oracle.com/customerconnect/discussion/772687/oci-oom-out-of-memory-is-killing-dnf-on-newly-created-compute-instance-while-performing-dnf)
 - [DNF operations use large amount of RAM - Fedora Discussion](https://discussion.fedoraproject.org/t/dnf-operations-use-large-amount-of-ram-and-may-fail-in-low-memory-environments/76389)
+- [systemd Resource Control - MemoryMax](https://www.freedesktop.org/software/systemd/man/latest/systemd.resource-control.html#MemoryMax=bytes)
 - [OKE Security Best Practices](https://docs.oracle.com/en-us/iaas/Content/ContEng/Tasks/contengbestpractices_topic-Security-best-practices.htm)
 - [Using Custom Cloud-init Scripts for OKE](https://docs.oracle.com/en-us/iaas/Content/ContEng/Tasks/contengusingcustomcloudinitscripts.htm)
