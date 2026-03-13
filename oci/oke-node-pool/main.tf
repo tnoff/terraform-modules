@@ -1,6 +1,7 @@
-# Cloud-init script that runs OKE initialization then applies OSMS memory mitigations:
+# Cloud-init script that runs OKE initialization then mitigates OSMS OOM risk:
 #   - Creates a swap file so dnf memory spikes have overflow room
-#   - Caps osms-agent via systemd MemoryMax so dnf is killed before pods are
+#   - Disables oracle-cloud-agent-updater (the OSMS mechanism on this image; osms-agent.service does not exist)
+#   - Kills any running dnf processes
 # IMPORTANT: Must include the default OKE init script or nodes won't join the cluster
 locals {
   limit_osms_cloud_init = var.limit_osms_memory ? base64encode(<<-EOF
@@ -15,6 +16,11 @@ chmod 600 /swapfile
 mkswap /swapfile
 swapon /swapfile
 echo '/swapfile none swap sw 0 0' >> /etc/fstab
+
+# Disable the OCI agent updater and kill any running dnf to prevent OOM
+# oracle-cloud-agent-updater manages OSMS on this image (osms-agent.service does not exist)
+systemctl disable --now oracle-cloud-agent-updater || true
+pkill -9 dnf || true
 EOF
   ) : null
 

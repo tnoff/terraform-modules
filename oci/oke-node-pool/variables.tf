@@ -107,7 +107,7 @@ variable "node_labels" {
 variable "limit_osms_memory" {
   type        = bool
   default     = false
-  description = "Mitigate dnf OOM risk by adding a swap file and capping OSMS agent memory via systemd. Keeps OSMS active for security patching while preventing runaway dnf from exhausting node memory."
+  description = "Mitigate dnf OOM risk by adding a swap file and disabling oracle-cloud-agent-updater (the OSMS mechanism on current OKE images). Prevents background dnf updates from OOM-killing kubelet or pods."
 }
 
 variable "osms_swap_size_gb" {

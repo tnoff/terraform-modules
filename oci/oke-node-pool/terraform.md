@@ -37,7 +37,7 @@ No modules.
 | <a name="input_instance_freeform_tags"></a> [instance\_freeform\_tags](#input\_instance\_freeform\_tags) | Freeform tags for node pool instances | `map(any)` | `{}` | no |
 | <a name="input_kms_key_ocid"></a> [kms\_key\_ocid](#input\_kms\_key\_ocid) | OCID of KMS Key Id to use for nodes | `string` | n/a | yes |
 | <a name="input_kubernetes_version"></a> [kubernetes\_version](#input\_kubernetes\_version) | Kubernetes version for cluster | `string` | `"1.33.0"` | no |
-| <a name="input_limit_osms_memory"></a> [limit\_osms\_memory](#input\_limit\_osms\_memory) | Mitigate dnf OOM risk by adding a swap file and capping OSMS agent memory via systemd. Keeps OSMS active for security patching while preventing runaway dnf from exhausting node memory. | `bool` | `false` | no |
+| <a name="input_limit_osms_memory"></a> [limit\_osms\_memory](#input\_limit\_osms\_memory) | Mitigate dnf OOM risk by adding a swap file and disabling oracle-cloud-agent-updater (the OSMS mechanism on current OKE images). Prevents background dnf updates from OOM-killing kubelet or pods. | `bool` | `false` | no |
 | <a name="input_memory_in_gbs"></a> [memory\_in\_gbs](#input\_memory\_in\_gbs) | Memory for each node in node pool | `number` | `6` | no |
 | <a name="input_node_labels"></a> [node\_labels](#input\_node\_labels) | Kubernetes node labels | `map(any)` | `{}` | no |
 | <a name="input_node_metadata"></a> [node\_metadata](#input\_node\_metadata) | Additional metadata key/value pairs to add to each node instance | `map(string)` | `{}` | no |
