@@ -107,7 +107,7 @@ variable "node_labels" {
 variable "limit_osms_memory" {
   type        = bool
   default     = false
-  description = "Mitigate dnf OOM risk by adding a swap file and capping oracle-cloud-agent-updater memory via systemd. Keeps OSMS active for security patching while preventing runaway dnf from exhausting node memory."
+  description = "Mitigate dnf OOM risk by capping oracle-cloud-agent-updater memory via systemd. Keeps OSMS active for security patching while preventing runaway dnf from exhausting node memory."
 }
 
 variable "osms_memory_limit_mb" {
@@ -118,17 +118,6 @@ variable "osms_memory_limit_mb" {
   validation {
     condition     = var.osms_memory_limit_mb >= 256 && var.osms_memory_limit_mb <= 4096
     error_message = "osms_memory_limit_mb must be between 256 and 4096."
-  }
-}
-
-variable "osms_swap_size_gb" {
-  type        = number
-  default     = 2
-  description = "Size in GB of the swap file created on each node when limit_osms_memory is enabled."
-
-  validation {
-    condition     = var.osms_swap_size_gb >= 1 && var.osms_swap_size_gb <= 16
-    error_message = "osms_swap_size_gb must be between 1 and 16."
   }
 }
 
