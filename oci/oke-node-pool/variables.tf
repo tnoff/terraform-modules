@@ -121,17 +121,6 @@ variable "osms_swap_size_gb" {
   }
 }
 
-variable "osms_memory_limit_mb" {
-  type        = number
-  default     = 512
-  description = "Hard memory cap (MB) applied to the osms-agent systemd service when limit_osms_memory is enabled. If dnf exceeds this, the OS kills dnf rather than pods."
-
-  validation {
-    condition     = var.osms_memory_limit_mb >= 256 && var.osms_memory_limit_mb <= 4096
-    error_message = "osms_memory_limit_mb must be between 256 and 4096."
-  }
-}
-
 variable "node_metadata" {
   type        = map(string)
   default     = {}

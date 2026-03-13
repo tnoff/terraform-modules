@@ -44,7 +44,6 @@ No modules.
 | <a name="input_node_pool_size"></a> [node\_pool\_size](#input\_node\_pool\_size) | Node pool size | `number` | `1` | no |
 | <a name="input_node_shape"></a> [node\_shape](#input\_node\_shape) | Desired node shape | `string` | `"VM.Standard.A1.Flex"` | no |
 | <a name="input_num_ocpus"></a> [num\_ocpus](#input\_num\_ocpus) | OCPUs for each node in node pool | `number` | `1` | no |
-| <a name="input_osms_memory_limit_mb"></a> [osms\_memory\_limit\_mb](#input\_osms\_memory\_limit\_mb) | Hard memory cap (MB) applied to the osms-agent systemd service when limit\_osms\_memory is enabled. If dnf exceeds this, the OS kills dnf rather than pods. | `number` | `512` | no |
 | <a name="input_osms_swap_size_gb"></a> [osms\_swap\_size\_gb](#input\_osms\_swap\_size\_gb) | Size in GB of the swap file created on each node when limit\_osms\_memory is enabled. | `number` | `2` | no |
 | <a name="input_ssh_public_key"></a> [ssh\_public\_key](#input\_ssh\_public\_key) | Full SSH public key | `string` | n/a | yes |
 | <a name="input_tenancy_ocid"></a> [tenancy\_ocid](#input\_tenancy\_ocid) | Tenancy OCID, for image lookup | `string` | n/a | yes |

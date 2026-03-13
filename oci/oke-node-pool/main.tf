@@ -15,16 +15,6 @@ chmod 600 /swapfile
 mkswap /swapfile
 swapon /swapfile
 echo '/swapfile none swap sw 0 0' >> /etc/fstab
-
-# Cap osms-agent memory so dnf is OOM-killed before Kubernetes pods are
-mkdir -p /etc/systemd/system/osms-agent.service.d
-cat > /etc/systemd/system/osms-agent.service.d/memory-limit.conf <<UNIT
-[Service]
-MemoryMax=${var.osms_memory_limit_mb}M
-MemorySwapMax=0
-UNIT
-systemctl daemon-reload
-systemctl restart osms-agent || true
 EOF
   ) : null
 
