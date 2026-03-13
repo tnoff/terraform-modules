@@ -17,7 +17,6 @@ This is a known issue with `libdnf` metadata parsing ([Bug 1907030](https://bugz
 
 - `dnf` loads repository metadata into memory during updates
 - OKE nodes have multiple large repos enabled (oke-packages, ksplice, Oracle Linux base)
-- OKE images are swapless by default, providing no overflow buffer
 - OSMS triggers full `dnf` operations automatically
 
 The OOM killer targets Kubernetes pods (which run as BestEffort QoS without resource limits) before system processes like `dnf` because pods have higher `oom_score_adj` values.
@@ -26,9 +25,8 @@ The OOM killer targets Kubernetes pods (which run as BestEffort QoS without reso
 
 This module includes a `limit_osms_memory` variable that applies mitigations at node boot via cloud-init:
 
-1. **Swap file** — adds a configurable swap file (default 2GB) so `dnf` memory spikes have an overflow buffer rather than immediately exhausting RAM.
-2. **systemd memory cap** — sets `MemoryMax` on `oracle-cloud-agent-updater.service` (default 512MB) so that if `dnf` exceeds the cap, the OS kills `dnf` rather than Kubernetes pods.
-3. **Kill running `dnf` processes** — any `dnf` already in flight when the script runs is terminated.
+1. **systemd memory cap** — sets `MemoryMax` on `oracle-cloud-agent-updater.service` (default 512MB) so that if `dnf` exceeds the cap, the OS kills `dnf` rather than Kubernetes pods.
+2. **Kill running `dnf` processes** — any `dnf` already in flight when the script runs is terminated.
 
 This approach keeps OSMS active for security patching while preventing runaway `dnf` from destabilising the node.
 
@@ -42,8 +40,7 @@ module "oke_node_pool" {
 
   # ... other configuration ...
 
-  limit_osms_memory    = true   # enable swap + memory cap mitigations
-  osms_swap_size_gb    = 2      # optional, default 2
+  limit_osms_memory    = true   # enable memory cap mitigation
   osms_memory_limit_mb = 512    # optional, default 512
 }
 ```

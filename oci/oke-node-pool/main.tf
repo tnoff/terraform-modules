@@ -1,22 +1,15 @@
 # Cloud-init script that runs OKE initialization then mitigates OSMS OOM risk:
-#   - Creates a swap file so dnf memory spikes have overflow room
 #   - Caps oracle-cloud-agent-updater via systemd MemoryMax so dnf is killed before pods are
 #   - Kills any running dnf processes
 # IMPORTANT: Must include the default OKE init script or nodes won't join the cluster
 # NOTE: osms-agent.service does not exist on current OKE images; OSMS is managed by oracle-cloud-agent-updater
+# NOTE: Do NOT create a swap file — kubelet refuses to start when swap is enabled
 locals {
   limit_osms_cloud_init = var.limit_osms_memory ? base64encode(<<-EOF
 #!/bin/bash
 # First, run the default OKE initialization script (required for node to join cluster)
 curl --fail -H "Authorization: Bearer Oracle" -L0 http://169.254.169.254/opc/v2/instance/metadata/oke_init_script | base64 --decode >/var/run/oke-init.sh
 bash /var/run/oke-init.sh
-
-# Create swap file to provide overflow buffer for dnf memory spikes
-fallocate -l ${var.osms_swap_size_gb}G /swapfile
-chmod 600 /swapfile
-mkswap /swapfile
-swapon /swapfile
-echo '/swapfile none swap sw 0 0' >> /etc/fstab
 
 # Cap oracle-cloud-agent-updater memory so dnf is OOM-killed before Kubernetes pods are
 # (osms-agent.service does not exist on this image; oracle-cloud-agent-updater is the OSMS mechanism)

@@ -37,7 +37,7 @@ No modules.
 | <a name="input_instance_freeform_tags"></a> [instance\_freeform\_tags](#input\_instance\_freeform\_tags) | Freeform tags for node pool instances | `map(any)` | `{}` | no |
 | <a name="input_kms_key_ocid"></a> [kms\_key\_ocid](#input\_kms\_key\_ocid) | OCID of KMS Key Id to use for nodes | `string` | n/a | yes |
 | <a name="input_kubernetes_version"></a> [kubernetes\_version](#input\_kubernetes\_version) | Kubernetes version for cluster | `string` | `"1.33.0"` | no |
-| <a name="input_limit_osms_memory"></a> [limit\_osms\_memory](#input\_limit\_osms\_memory) | Mitigate dnf OOM risk by adding a swap file and capping oracle-cloud-agent-updater memory via systemd. Keeps OSMS active for security patching while preventing runaway dnf from exhausting node memory. | `bool` | `false` | no |
+| <a name="input_limit_osms_memory"></a> [limit\_osms\_memory](#input\_limit\_osms\_memory) | Mitigate dnf OOM risk by capping oracle-cloud-agent-updater memory via systemd. Keeps OSMS active for security patching while preventing runaway dnf from exhausting node memory. | `bool` | `false` | no |
 | <a name="input_memory_in_gbs"></a> [memory\_in\_gbs](#input\_memory\_in\_gbs) | Memory for each node in node pool | `number` | `6` | no |
 | <a name="input_node_labels"></a> [node\_labels](#input\_node\_labels) | Kubernetes node labels | `map(any)` | `{}` | no |
 | <a name="input_node_metadata"></a> [node\_metadata](#input\_node\_metadata) | Additional metadata key/value pairs to add to each node instance | `map(string)` | `{}` | no |
@@ -45,7 +45,6 @@ No modules.
 | <a name="input_node_shape"></a> [node\_shape](#input\_node\_shape) | Desired node shape | `string` | `"VM.Standard.A1.Flex"` | no |
 | <a name="input_num_ocpus"></a> [num\_ocpus](#input\_num\_ocpus) | OCPUs for each node in node pool | `number` | `1` | no |
 | <a name="input_osms_memory_limit_mb"></a> [osms\_memory\_limit\_mb](#input\_osms\_memory\_limit\_mb) | Memory cap in MB applied to oracle-cloud-agent-updater via systemd MemoryMax when limit\_osms\_memory is enabled. dnf will be OOM-killed at this threshold before Kubernetes pods are affected. | `number` | `512` | no |
-| <a name="input_osms_swap_size_gb"></a> [osms\_swap\_size\_gb](#input\_osms\_swap\_size\_gb) | Size in GB of the swap file created on each node when limit\_osms\_memory is enabled. | `number` | `2` | no |
 | <a name="input_ssh_public_key"></a> [ssh\_public\_key](#input\_ssh\_public\_key) | Full SSH public key | `string` | n/a | yes |
 | <a name="input_tenancy_ocid"></a> [tenancy\_ocid](#input\_tenancy\_ocid) | Tenancy OCID, for image lookup | `string` | n/a | yes |
 | <a name="input_worker_pool_subnet_ocid"></a> [worker\_pool\_subnet\_ocid](#input\_worker\_pool\_subnet\_ocid) | Subnet OCID for Node Pools | `string` | n/a | yes |
