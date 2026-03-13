@@ -107,7 +107,18 @@ variable "node_labels" {
 variable "limit_osms_memory" {
   type        = bool
   default     = false
-  description = "Mitigate dnf OOM risk by adding a swap file and disabling oracle-cloud-agent-updater (the OSMS mechanism on current OKE images). Prevents background dnf updates from OOM-killing kubelet or pods."
+  description = "Mitigate dnf OOM risk by adding a swap file and capping oracle-cloud-agent-updater memory via systemd. Keeps OSMS active for security patching while preventing runaway dnf from exhausting node memory."
+}
+
+variable "osms_memory_limit_mb" {
+  type        = number
+  default     = 512
+  description = "Memory cap in MB applied to oracle-cloud-agent-updater via systemd MemoryMax when limit_osms_memory is enabled. dnf will be OOM-killed at this threshold before Kubernetes pods are affected."
+
+  validation {
+    condition     = var.osms_memory_limit_mb >= 256 && var.osms_memory_limit_mb <= 4096
+    error_message = "osms_memory_limit_mb must be between 256 and 4096."
+  }
 }
 
 variable "osms_swap_size_gb" {

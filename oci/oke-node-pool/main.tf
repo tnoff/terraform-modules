@@ -1,8 +1,9 @@
 # Cloud-init script that runs OKE initialization then mitigates OSMS OOM risk:
 #   - Creates a swap file so dnf memory spikes have overflow room
-#   - Disables oracle-cloud-agent-updater (the OSMS mechanism on this image; osms-agent.service does not exist)
+#   - Caps oracle-cloud-agent-updater via systemd MemoryMax so dnf is killed before pods are
 #   - Kills any running dnf processes
 # IMPORTANT: Must include the default OKE init script or nodes won't join the cluster
+# NOTE: osms-agent.service does not exist on current OKE images; OSMS is managed by oracle-cloud-agent-updater
 locals {
   limit_osms_cloud_init = var.limit_osms_memory ? base64encode(<<-EOF
 #!/bin/bash
@@ -17,9 +18,17 @@ mkswap /swapfile
 swapon /swapfile
 echo '/swapfile none swap sw 0 0' >> /etc/fstab
 
-# Disable the OCI agent updater and kill any running dnf to prevent OOM
-# oracle-cloud-agent-updater manages OSMS on this image (osms-agent.service does not exist)
-systemctl disable --now oracle-cloud-agent-updater || true
+# Cap oracle-cloud-agent-updater memory so dnf is OOM-killed before Kubernetes pods are
+# (osms-agent.service does not exist on this image; oracle-cloud-agent-updater is the OSMS mechanism)
+mkdir -p /etc/systemd/system/oracle-cloud-agent-updater.service.d
+cat > /etc/systemd/system/oracle-cloud-agent-updater.service.d/memory-limit.conf <<UNIT
+[Service]
+MemoryMax=${var.osms_memory_limit_mb}M
+UNIT
+systemctl daemon-reload
+systemctl restart oracle-cloud-agent-updater || true
+
+# Kill any dnf already running at this point
 pkill -9 dnf || true
 EOF
   ) : null

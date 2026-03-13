@@ -27,10 +27,12 @@ The OOM killer targets Kubernetes pods (which run as BestEffort QoS without reso
 This module includes a `limit_osms_memory` variable that applies mitigations at node boot via cloud-init:
 
 1. **Swap file** — adds a configurable swap file (default 2GB) so `dnf` memory spikes have an overflow buffer rather than immediately exhausting RAM.
-2. **Disable `oracle-cloud-agent-updater`** — stops the OCI agent updater service, which is the mechanism that triggers OSMS `dnf` runs on current OKE images. (`osms-agent.service` does not exist on these images; OSMS is managed by `oracle-cloud-agent-updater`.)
+2. **systemd memory cap** — sets `MemoryMax` on `oracle-cloud-agent-updater.service` (default 512MB) so that if `dnf` exceeds the cap, the OS kills `dnf` rather than Kubernetes pods.
 3. **Kill running `dnf` processes** — any `dnf` already in flight when the script runs is terminated.
 
-> **Note:** A previous approach attempted to cap `osms-agent.service` memory via systemd `MemoryMax`. This did not work because `osms-agent.service` does not exist on current OKE images — the OSMS functionality is provided by `oracle-cloud-agent-updater` instead.
+This approach keeps OSMS active for security patching while preventing runaway `dnf` from destabilising the node.
+
+> **Note:** On current OKE images, `osms-agent.service` does not exist as a standalone unit. OSMS is managed by `oracle-cloud-agent-updater`. The memory cap targets that service.
 
 ## Usage
 
@@ -40,14 +42,15 @@ module "oke_node_pool" {
 
   # ... other configuration ...
 
-  limit_osms_memory = true   # enable swap + agent-updater disable mitigations
-  osms_swap_size_gb = 2      # optional, default 2
+  limit_osms_memory    = true   # enable swap + memory cap mitigations
+  osms_swap_size_gb    = 2      # optional, default 2
+  osms_memory_limit_mb = 512    # optional, default 512
 }
 ```
 
 ## Why Not Just Disable OSMS?
 
-This effectively does disable OSMS-driven updates by stopping `oracle-cloud-agent-updater`. On current OKE node images, `osms-agent.service` does not exist as a standalone unit — the update agent is `oracle-cloud-agent-updater`. Disabling it is the only reliable way to prevent background `dnf` activity via Infrastructure as Code, since the Terraform OCI provider does not expose agent config on node pools (see below).
+The memory cap approach is more surgical: `oracle-cloud-agent-updater` continues to run and deliver patches, but `dnf` is constrained so it cannot starve pod workloads. Disabling the service entirely would block in-place OS security patches. The Terraform OCI provider does not expose agent config on node pools (see below), so cloud-init is the only IaC option either way.
 
 ## Why Cloud-Init Instead of Terraform Settings?
 
