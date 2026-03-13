@@ -497,6 +497,17 @@ resource "oci_core_security_list" "this_bastion" {
   }
 
   egress_security_rules {
+    destination      = var.worker_subnet_cidr_block
+    destination_type = "CIDR_BLOCK"
+    protocol         = 6
+    stateless        = false
+    tcp_options {
+      min = 22
+      max = 22
+    }
+  }
+
+  egress_security_rules {
     destination      = var.k8s_api_cidr_block
     destination_type = "CIDR_BLOCK"
     protocol         = "1"
