@@ -331,6 +331,12 @@ resource "oci_core_security_list" "this_worker" {
     stateless        = false
   }
 
+  # Setup rules initially
+  # But let OKE and w/e services update as necessary
+  lifecycle {
+    ignore_changes = [ingress_security_rules]
+  }
+
 }
 
 resource "oci_core_subnet" "this_worker" {
