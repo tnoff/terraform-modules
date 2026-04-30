@@ -65,7 +65,7 @@ resource "github_branch_default" "this" {
 
 
 resource "github_repository_ruleset" "this" {
-  count       = var.is_public ? 1 : 0
+  count       = var.is_public && var.enable_ruleset ? 1 : 0
   name        = "main-branch-protection"
   repository  = github_repository.this.name
   target      = "branch"

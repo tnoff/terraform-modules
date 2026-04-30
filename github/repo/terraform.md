@@ -42,6 +42,7 @@ No modules.
 | <a name="input_collaborators"></a> [collaborators](#input\_collaborators) | Map of GitHub username to permission level for repository collaborators. Valid permissions: pull, triage, push, maintain, admin | `map(string)` | `{}` | no |
 | <a name="input_default_branch"></a> [default\_branch](#input\_default\_branch) | Name of default branch | `string` | `"main"` | no |
 | <a name="input_dependabot_secrets"></a> [dependabot\_secrets](#input\_dependabot\_secrets) | Key/Value pair for depenabot secrets | `map(any)` | `{}` | no |
+| <a name="input_enable_ruleset"></a> [enable\_ruleset](#input\_enable\_ruleset) | Whether to create the main branch protection ruleset. Disable for repos used as push mirrors. | `bool` | `true` | no |
 | <a name="input_is_public"></a> [is\_public](#input\_is\_public) | Is repository public | `bool` | `true` | no |
 | <a name="input_repo_description"></a> [repo\_description](#input\_repo\_description) | Description for repository | `string` | n/a | yes |
 | <a name="input_repo_labels"></a> [repo\_labels](#input\_repo\_labels) | Key/Value pair of label name and color | `map(any)` | `{}` | no |
