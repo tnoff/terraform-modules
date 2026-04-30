@@ -68,6 +68,12 @@ variable "collaborators" {
   description = "Map of GitHub username to permission level for repository collaborators. Valid permissions: pull, triage, push, maintain, admin"
 }
 
+variable "enable_ruleset" {
+  type        = bool
+  default     = true
+  description = "Whether to create the main branch protection ruleset. Disable for repos used as push mirrors."
+}
+
 variable "bypass_actors" {
   type = list(object({
     actor_id    = number
