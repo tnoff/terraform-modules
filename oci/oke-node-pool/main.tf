@@ -1,18 +1,26 @@
-# Cloud-init script that runs OKE initialization then mitigates OSMS OOM risk:
-#   - Caps oracle-cloud-agent-updater via systemd MemoryMax so dnf is killed before pods are
-#   - Kills any running dnf processes
-# IMPORTANT: Must include the default OKE init script or nodes won't join the cluster
-# NOTE: osms-agent.service does not exist on current OKE images; OSMS is managed by oracle-cloud-agent-updater
-# NOTE: Do NOT create a swap file — kubelet refuses to start when swap is enabled
+# Cloud-init script for OKE worker nodes. Runs in this order:
+#   1. oci-growfs    — extends the root partition to the full boot volume
+#                       (defaults give ~35 GiB on a 50 GB volume; growfs reclaims the rest).
+#                       Runs BEFORE kubelet starts so allocatable ephemeral-storage is correct.
+#   2. oke-init      — the standard OKE bootstrap, with extra kubelet flags appended:
+#                       aggressive image-GC thresholds prevent the small node disk
+#                       from filling up with cached images.
+#   3. OSMS limits   — caps oracle-cloud-agent-updater memory so dnf is OOM-killed
+#                       before Kubernetes pods are; kills any in-flight dnf.
+# IMPORTANT: Must include the default OKE init script or nodes won't join the cluster.
+# NOTE: osms-agent.service does not exist on current OKE images; OSMS is managed by oracle-cloud-agent-updater.
+# NOTE: Do NOT create a swap file — kubelet refuses to start when swap is enabled.
 locals {
-  limit_osms_cloud_init = var.limit_osms_memory ? base64encode(<<-EOF
+  node_init_cloud_init = var.enable_node_init_customizations ? base64encode(<<-EOF
 #!/bin/bash
-# First, run the default OKE initialization script (required for node to join cluster)
-curl --fail -H "Authorization: Bearer Oracle" -L0 http://169.254.169.254/opc/v2/instance/metadata/oke_init_script | base64 --decode >/var/run/oke-init.sh
-bash /var/run/oke-init.sh
+# 1. Reclaim the full boot volume before kubelet starts.
+/usr/libexec/oci-growfs -y || true
 
-# Cap oracle-cloud-agent-updater memory so dnf is OOM-killed before Kubernetes pods are
-# (osms-agent.service does not exist on this image; oracle-cloud-agent-updater is the OSMS mechanism)
+# 2. Run the default OKE init with custom kubelet flags appended.
+curl --fail -H "Authorization: Bearer Oracle" -L0 http://169.254.169.254/opc/v2/instance/metadata/oke_init_script | base64 --decode >/var/run/oke-init.sh
+bash /var/run/oke-init.sh --kubelet-extra-args "--image-gc-high-threshold=${var.image_gc_high_threshold_percent} --image-gc-low-threshold=${var.image_gc_low_threshold_percent}"
+
+# 3. Cap oracle-cloud-agent-updater memory so dnf is OOM-killed before Kubernetes pods are.
 mkdir -p /etc/systemd/system/oracle-cloud-agent-updater.service.d
 cat > /etc/systemd/system/oracle-cloud-agent-updater.service.d/memory-limit.conf <<UNIT
 [Service]
@@ -26,9 +34,9 @@ pkill -9 dnf || true
 EOF
   ) : null
 
-  node_metadata = var.limit_osms_memory ? merge(
+  node_metadata = var.enable_node_init_customizations ? merge(
     var.node_metadata,
-    { user_data = local.limit_osms_cloud_init }
+    { user_data = local.node_init_cloud_init }
   ) : var.node_metadata
 }
 

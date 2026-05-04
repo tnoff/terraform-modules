@@ -104,20 +104,42 @@ variable "node_labels" {
   description = "Kubernetes node labels"
 }
 
-variable "limit_osms_memory" {
+variable "enable_node_init_customizations" {
   type        = bool
   default     = false
-  description = "Mitigate dnf OOM risk by capping oracle-cloud-agent-updater memory via systemd. Keeps OSMS active for security patching while preventing runaway dnf from exhausting node memory."
+  description = "Enable a custom cloud-init user_data script that (1) extends the root partition to the full boot volume via oci-growfs, (2) starts kubelet with aggressive image-GC thresholds, and (3) caps oracle-cloud-agent-updater memory to mitigate dnf OOM. The script always re-runs the default OKE init first, so nodes still join the cluster normally."
 }
 
 variable "osms_memory_limit_mb" {
   type        = number
   default     = 512
-  description = "Memory cap in MB applied to oracle-cloud-agent-updater via systemd MemoryMax when limit_osms_memory is enabled. dnf will be OOM-killed at this threshold before Kubernetes pods are affected."
+  description = "Memory cap in MB applied to oracle-cloud-agent-updater via systemd MemoryMax when enable_node_init_customizations is true. dnf will be OOM-killed at this threshold before Kubernetes pods are affected."
 
   validation {
     condition     = var.osms_memory_limit_mb >= 256 && var.osms_memory_limit_mb <= 4096
     error_message = "osms_memory_limit_mb must be between 256 and 4096."
+  }
+}
+
+variable "image_gc_high_threshold_percent" {
+  type        = number
+  default     = 60
+  description = "Disk-usage % at which kubelet starts garbage-collecting unused images. Lowered from the kubelet default (85) because OKE OL8 boot volumes are small (~38 GiB usable on a 50 GB volume) and the steady-state image cache can sit close to the eviction threshold. Only applied when enable_node_init_customizations is true."
+
+  validation {
+    condition     = var.image_gc_high_threshold_percent > var.image_gc_low_threshold_percent && var.image_gc_high_threshold_percent <= 100
+    error_message = "image_gc_high_threshold_percent must be greater than image_gc_low_threshold_percent and at most 100."
+  }
+}
+
+variable "image_gc_low_threshold_percent" {
+  type        = number
+  default     = 40
+  description = "Disk-usage % kubelet aims to reach when garbage-collecting images. Only applied when enable_node_init_customizations is true."
+
+  validation {
+    condition     = var.image_gc_low_threshold_percent >= 0 && var.image_gc_low_threshold_percent < 100
+    error_message = "image_gc_low_threshold_percent must be between 0 and 99."
   }
 }
 
