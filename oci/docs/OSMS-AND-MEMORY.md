@@ -23,12 +23,13 @@ The OOM killer targets Kubernetes pods (which run as BestEffort QoS without reso
 
 ## The Solution
 
-This module includes a `limit_osms_memory` variable that applies mitigations at node boot via cloud-init:
+This module includes an `enable_node_init_customizations` variable that runs a custom cloud-init user_data at node boot. The script re-runs the default OKE init first (so nodes still join the cluster) and then applies three mitigations:
 
-1. **systemd memory cap** — sets `MemoryMax` on `oracle-cloud-agent-updater.service` (default 512MB) so that if `dnf` exceeds the cap, the OS kills `dnf` rather than Kubernetes pods.
-2. **Kill running `dnf` processes** — any `dnf` already in flight when the script runs is terminated.
+1. **`oci-growfs`** — extends the root partition to the full boot volume. Default OKE images carve the volume into multiple partitions and the root fs ends up well below the configured volume size; `oci-growfs` reclaims the rest.
+2. **Aggressive kubelet image-GC** — passes `--image-gc-high-threshold` and `--image-gc-low-threshold` to kubelet (defaults 60/40, vs kubelet's stock 85/80). Small OKE boot volumes can otherwise sit close to the eviction threshold from cached images alone, and a single CI image pull can punch through.
+3. **OSMS memory cap** — sets `MemoryMax` on `oracle-cloud-agent-updater.service` (default 512MB) so that if `dnf` exceeds the cap, the OS kills `dnf` rather than Kubernetes pods. Any in-flight `dnf` process is also killed.
 
-This approach keeps OSMS active for security patching while preventing runaway `dnf` from destabilising the node.
+This keeps OSMS active for security patching while preventing runaway `dnf` from destabilising the node, and makes the small default boot-volume layout viable for image-heavy workloads (CI runners, observability stacks).
 
 > **Note:** On current OKE images, `osms-agent.service` does not exist as a standalone unit. OSMS is managed by `oracle-cloud-agent-updater`. The memory cap targets that service.
 
@@ -40,8 +41,10 @@ module "oke_node_pool" {
 
   # ... other configuration ...
 
-  limit_osms_memory    = true   # enable memory cap mitigation
-  osms_memory_limit_mb = 512    # optional, default 512
+  enable_node_init_customizations = true   # opt in to growfs + aggressive GC + OSMS cap
+  osms_memory_limit_mb            = 512    # optional, default 512
+  image_gc_high_threshold_percent = 60     # optional, default 60
+  image_gc_low_threshold_percent  = 40     # optional, default 40
 }
 ```
 
