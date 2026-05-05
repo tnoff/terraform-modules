@@ -20,7 +20,7 @@ stages:
 
 terraform-validate:
   stage: validate
-  image: docker.io/hashicorp/terraform:1.11
+  image: docker.io/hashicorp/terraform:1.15
   script:
     - terraform fmt -check -recursive
     - terraform validate -no-color
