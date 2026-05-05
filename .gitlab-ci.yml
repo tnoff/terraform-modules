@@ -32,7 +32,7 @@ terraform-validate:
 terraform-docs:
   stage: validate
   image:
-    name: quay.io/terraform-docs/terraform-docs:0.19.0
+    name: quay.io/terraform-docs/terraform-docs:0.20.0
     entrypoint: [""]
   parallel:
     matrix:
