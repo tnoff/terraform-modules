@@ -1,4 +1,4 @@
-resource "kubernetes_secret" "oci_docker_credentials" {
+resource "kubernetes_secret_v1" "oci_docker_credentials" {
   for_each = toset(var.namespaces)
   metadata {
     name      = "oci-docker-cfg"

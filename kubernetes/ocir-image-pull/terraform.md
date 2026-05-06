@@ -4,13 +4,13 @@
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | ~> 1.9 |
-| <a name="requirement_kubernetes"></a> [kubernetes](#requirement\_kubernetes) | ~> 2.36 |
+| <a name="requirement_kubernetes"></a> [kubernetes](#requirement\_kubernetes) | ~> 3.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_kubernetes"></a> [kubernetes](#provider\_kubernetes) | ~> 2.36 |
+| <a name="provider_kubernetes"></a> [kubernetes](#provider\_kubernetes) | ~> 3.0 |
 
 ## Modules
 
@@ -20,7 +20,7 @@ No modules.
 
 | Name | Type |
 |------|------|
-| [kubernetes_secret.oci_docker_credentials](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/secret) | resource |
+| [kubernetes_secret_v1.oci_docker_credentials](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/secret_v1) | resource |
 
 ## Inputs
 
