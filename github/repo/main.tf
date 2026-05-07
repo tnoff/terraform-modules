@@ -6,10 +6,14 @@ resource "github_repository" "this" {
   allow_auto_merge       = var.allow_auto_merge
   allow_merge_commit     = false
   delete_branch_on_merge = true
-  vulnerability_alerts   = true
-  has_downloads          = true
-  has_issues             = true
-  has_wiki               = true
+  has_downloads          = var.has_downloads
+  has_issues             = var.has_issues
+  has_wiki               = var.has_wiki
+}
+
+resource "github_repository_vulnerability_alerts" "this" {
+  count      = var.enable_vulnerability_alerts ? 1 : 0
+  repository = github_repository.this.name
 }
 
 resource "github_actions_secret" "this" {

@@ -74,6 +74,30 @@ variable "enable_ruleset" {
   description = "Whether to create the main branch protection ruleset. Disable for repos used as push mirrors."
 }
 
+variable "enable_vulnerability_alerts" {
+  type        = bool
+  default     = false
+  description = "Whether to enable Dependabot vulnerability alerts. Defaults to false for mirrors where scanning happens upstream."
+}
+
+variable "has_issues" {
+  type        = bool
+  default     = false
+  description = "Enable the issues feature. Defaults to false for mirrors where issues are tracked upstream."
+}
+
+variable "has_wiki" {
+  type        = bool
+  default     = false
+  description = "Enable the wiki feature. Defaults to false for mirrors."
+}
+
+variable "has_downloads" {
+  type        = bool
+  default     = false
+  description = "Enable the downloads feature. Defaults to false for mirrors."
+}
+
 variable "bypass_actors" {
   type = list(object({
     actor_id    = number

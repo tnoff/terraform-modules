@@ -30,6 +30,7 @@ No modules.
 | [github_repository_collaborator.this](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository_collaborator) | resource |
 | [github_repository_ruleset.this](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository_ruleset) | resource |
 | [github_repository_topics.this](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository_topics) | resource |
+| [github_repository_vulnerability_alerts.this](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository_vulnerability_alerts) | resource |
 
 ## Inputs
 
@@ -43,6 +44,10 @@ No modules.
 | <a name="input_default_branch"></a> [default\_branch](#input\_default\_branch) | Name of default branch | `string` | `"main"` | no |
 | <a name="input_dependabot_secrets"></a> [dependabot\_secrets](#input\_dependabot\_secrets) | Key/Value pair for depenabot secrets | `map(any)` | `{}` | no |
 | <a name="input_enable_ruleset"></a> [enable\_ruleset](#input\_enable\_ruleset) | Whether to create the main branch protection ruleset. Disable for repos used as push mirrors. | `bool` | `true` | no |
+| <a name="input_enable_vulnerability_alerts"></a> [enable\_vulnerability\_alerts](#input\_enable\_vulnerability\_alerts) | Whether to enable Dependabot vulnerability alerts. Defaults to false for mirrors where scanning happens upstream. | `bool` | `false` | no |
+| <a name="input_has_downloads"></a> [has\_downloads](#input\_has\_downloads) | Enable the downloads feature. Defaults to false for mirrors. | `bool` | `false` | no |
+| <a name="input_has_issues"></a> [has\_issues](#input\_has\_issues) | Enable the issues feature. Defaults to false for mirrors where issues are tracked upstream. | `bool` | `false` | no |
+| <a name="input_has_wiki"></a> [has\_wiki](#input\_has\_wiki) | Enable the wiki feature. Defaults to false for mirrors. | `bool` | `false` | no |
 | <a name="input_is_public"></a> [is\_public](#input\_is\_public) | Is repository public | `bool` | `true` | no |
 | <a name="input_repo_description"></a> [repo\_description](#input\_repo\_description) | Description for repository | `string` | n/a | yes |
 | <a name="input_repo_labels"></a> [repo\_labels](#input\_repo\_labels) | Key/Value pair of label name and color | `map(any)` | `{}` | no |
