@@ -56,6 +56,13 @@ resource "oci_objectstorage_bucket" "this" {
   defined_tags   = var.defined_tags
   kms_key_id     = var.kms_key_ocid
   versioning     = var.versioning_enabled ? "Enabled" : "Disabled"
+
+  lifecycle {
+    ignore_changes = [
+      approximate_count,
+      approximate_size,
+    ]
+  }
 }
 
 resource "oci_objectstorage_object_lifecycle_policy" "this" {

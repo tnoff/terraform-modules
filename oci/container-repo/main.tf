@@ -10,4 +10,13 @@ resource "oci_artifacts_container_repository" "this" {
     content = var.readme_text
     format  = "text/plain"
   }
+
+  lifecycle {
+    ignore_changes = [
+      image_count,
+      layer_count,
+      layers_size_in_bytes,
+      time_last_pushed,
+    ]
+  }
 }
