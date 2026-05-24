@@ -48,6 +48,7 @@ No modules.
 | Name | Description |
 |------|-------------|
 | <a name="output_access_key"></a> [access\_key](#output\_access\_key) | n/a |
+| <a name="output_api_key_fingerprint"></a> [api\_key\_fingerprint](#output\_api\_key\_fingerprint) | n/a |
 | <a name="output_auth_token"></a> [auth\_token](#output\_auth\_token) | n/a |
 | <a name="output_group"></a> [group](#output\_group) | n/a |
 | <a name="output_secret_key"></a> [secret\_key](#output\_secret\_key) | n/a |

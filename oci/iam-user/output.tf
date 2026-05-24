@@ -20,3 +20,7 @@ output "secret_key" {
   value     = var.user_secret_key == "" ? "" : oci_identity_customer_secret_key.this.0.key
   sensitive = true
 }
+
+output "api_key_fingerprint" {
+  value = var.user_public_key == "" ? null : oci_identity_api_key.this.0.fingerprint
+}
