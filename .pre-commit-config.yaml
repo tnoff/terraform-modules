@@ -26,6 +26,12 @@ repos:
         args: ["github/"]
         pass_filenames: false
       - id: terraform-docs
+        name: terraform-docs-gitlab
+        language: docker_image
+        entry: quay.io/terraform-docs/terraform-docs:0.19.0  # or, change latest to pin to a specific version
+        args: ["gitlab/"]
+        pass_filenames: false
+      - id: terraform-docs
         name: terraform-docs-kubernetes
         language: docker_image
         entry: quay.io/terraform-docs/terraform-docs:0.19.0  # or, change latest to pin to a specific version
