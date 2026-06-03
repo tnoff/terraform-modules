@@ -11,6 +11,7 @@ A collection of reusable Terraform modules for personal development across multi
 - [Provider Configuration](#provider-configuration)
   - [Cloudflare](#cloudflare)
   - [GitHub](#github)
+  - [GitLab](#gitlab)
   - [Discord](#discord)
   - [OCI (Oracle Cloud Infrastructure)](#oci-oracle-cloud-infrastructure)
   - [Kubernetes](#kubernetes)
@@ -22,7 +23,7 @@ Modules are consumed via Git references with specific commit SHAs to ensure repr
 
 ```hcl
 module "example" {
-  source = "git::https://github.com/tnoff/terraform-modules.git//oci/iam-user?ref=<commit-sha>"
+  source = "git::https://gitlab.com/tnoff-projects/terraform-modules.git//oci/iam-user?ref=<commit-sha>"
 
   # Module variables...
   tenancy_ocid       = var.oci_tenancy_ocid
@@ -44,6 +45,9 @@ module "example" {
 - **repo** - Repository management with branch protection, secrets, and webhooks
 - **discord-webhook** - Configure Discord webhooks for GitHub events
 
+### GitLab
+- **repo** - GitLab project management with CI/CD variables, schedules, and pipeline triggers
+
 ### Discord
 - **base-permissions** - Base permission bit calculations
 - **role** - Server role management
@@ -55,6 +59,7 @@ module "example" {
 - **container-repo** - OCI Container Registry repositories
 - **iam-compartment** - Compartment and dynamic group management
 - **iam-user** - User, group, and policy management
+- **kms-policies** - KMS key access policies
 - **object-storage-bucket** - Object storage buckets with lifecycle policies and versioning
 - **object-storage-lifecycle-policies** - Lifecycle policies for object storage
 - **oke-cluster** - Oracle Kubernetes Engine cluster
@@ -81,7 +86,7 @@ This repository follows consistent variable naming conventions across all module
 ### Example
 ```hcl
 module "bucket" {
-  source           = "git::https://github.com/tnoff/terraform-modules.git//oci/object-storage-bucket?ref=<sha>"
+  source           = "git::https://gitlab.com/tnoff-projects/terraform-modules.git//oci/object-storage-bucket?ref=<sha>"
   compartment_ocid = var.compartment_ocid  # Not compartment_id
   display_name     = "my-bucket"           # Not name
   kms_key_ocid     = var.kms_key_ocid     # Not kms_key_id
@@ -128,7 +133,7 @@ provider "cloudflare" {
 **Example Usage:**
 ```hcl
 module "dns_record" {
-  source = "git::https://github.com/tnoff/terraform-modules.git//cloudflare/dns?ref=<sha>"
+  source = "git::https://gitlab.com/tnoff-projects/terraform-modules.git//cloudflare/dns?ref=<sha>"
 
   zone_id = var.cloudflare_zone_id
   name    = "example.com"
@@ -163,7 +168,7 @@ provider "github" {
 **Example Usage:**
 ```hcl
 module "my_repo" {
-  source           = "git::https://github.com/tnoff/terraform-modules.git//github/repo?ref=<sha>"
+  source           = "git::https://gitlab.com/tnoff-projects/terraform-modules.git//github/repo?ref=<sha>"
   repo_name        = "my-project"
   repo_description = "My awesome project"
   is_public        = true
@@ -177,6 +182,48 @@ module "my_repo" {
     "build",
     "test"
   ]
+}
+```
+
+### GitLab
+
+GitLab project management for creating repositories with CI/CD variables, schedules, and cross-project pipeline triggers.
+
+**Provider Requirements:**
+```hcl
+terraform {
+  required_providers {
+    gitlab = {
+      source  = "gitlabhq/gitlab"
+      version = "~> 19.0"
+    }
+  }
+  required_version = "~> 1.9"
+}
+
+provider "gitlab" {
+  token = var.gitlab_api_key
+}
+```
+
+**Authentication:** Requires a [GitLab personal access token](https://docs.gitlab.com/user/profile/personal_access_tokens/) with `api` scope.
+
+**Example Usage:**
+```hcl
+data "gitlab_group" "personal" {
+  full_path = "tnoff-projects"
+}
+
+module "my_project" {
+  source       = "git::https://gitlab.com/tnoff-projects/terraform-modules.git//gitlab/repo?ref=<sha>"
+  name         = "my-project"
+  namespace_id = data.gitlab_group.personal.id
+  description  = "My project"
+  visibility_level = "private"
+
+  pipeline_variables = {
+    SOME_TOKEN = { value = var.some_token, masked = true }
+  }
 }
 ```
 
@@ -208,7 +255,7 @@ provider "discord" {
 **Example Usage:**
 ```hcl
 module "admin_role" {
-  source          = "git::https://github.com/tnoff/terraform-modules.git//discord/role?ref=<sha>"
+  source          = "git::https://gitlab.com/tnoff-projects/terraform-modules.git//discord/role?ref=<sha>"
   server_id       = var.discord_server_id
   role_name       = "Admin"
   permission_bits = data.discord_permission.admin.allow_bits
@@ -218,7 +265,7 @@ module "admin_role" {
 }
 
 module "general_channel" {
-  source        = "git::https://github.com/tnoff/terraform-modules.git//discord/text-channel?ref=<sha>"
+  source        = "git::https://gitlab.com/tnoff-projects/terraform-modules.git//discord/text-channel?ref=<sha>"
   server_id     = var.discord_server_id
   category_id   = module.main_category.channel_group.id
   channel_name  = "general"
@@ -256,7 +303,7 @@ provider "oci" {
 ```hcl
 # Create a compartment
 module "app_compartment" {
-  source       = "git::https://github.com/tnoff/terraform-modules.git//oci/iam-compartment?ref=<sha>"
+  source       = "git::https://gitlab.com/tnoff-projects/terraform-modules.git//oci/iam-compartment?ref=<sha>"
   tenancy_ocid = var.oci_tenancy_ocid
   display_name = "applications"
   freeform_tags = {
@@ -266,7 +313,7 @@ module "app_compartment" {
 
 # Create an object storage bucket
 module "backup_bucket" {
-  source                  = "git::https://github.com/tnoff/terraform-modules.git//oci/object-storage-bucket?ref=<sha>"
+  source                  = "git::https://gitlab.com/tnoff-projects/terraform-modules.git//oci/object-storage-bucket?ref=<sha>"
   compartment_ocid        = module.app_compartment.compartment.id
   display_name            = "backups"
   namespace               = var.oci_namespace
@@ -281,13 +328,13 @@ module "backup_bucket" {
 
 # Create OKE cluster
 module "oke_network" {
-  source           = "git::https://github.com/tnoff/terraform-modules.git//oci/oke-networking?ref=<sha>"
+  source           = "git::https://gitlab.com/tnoff-projects/terraform-modules.git//oci/oke-networking?ref=<sha>"
   compartment_ocid = module.app_compartment.compartment.id
   display_name     = "oke-network"
 }
 
 module "oke_cluster" {
-  source             = "git::https://github.com/tnoff/terraform-modules.git//oci/oke-cluster?ref=<sha>"
+  source             = "git::https://gitlab.com/tnoff-projects/terraform-modules.git//oci/oke-cluster?ref=<sha>"
   compartment_ocid   = module.app_compartment.compartment.id
   display_name       = "production"
   vcn_ocid           = module.oke_network.vcn.id
@@ -305,7 +352,7 @@ Kubernetes-specific modules for integration with OCI services.
 **Example Usage:**
 ```hcl
 module "ocir_secret" {
-  source = "git::https://github.com/tnoff/terraform-modules.git//kubernetes/ocir-image-pull?ref=<sha>"
+  source = "git::https://gitlab.com/tnoff-projects/terraform-modules.git//kubernetes/ocir-image-pull?ref=<sha>"
 
   namespace = "default"
   secret_name = "ocir-credentials"
@@ -317,29 +364,18 @@ module "ocir_secret" {
 
 ## Development
 
-For information on developing and contributing to these modules, see [AGENTS.md](AGENTS.md), which includes:
-- Pre-commit hook setup and usage
-- Terraform formatting guidelines
-- Documentation generation with terraform-docs
-- Module structure and design patterns
-- Variable naming conventions
-- Testing and validation procedures
+See [DEVELOPMENT.md](DEVELOPMENT.md) for prerequisites, pre-commit setup,
+how to format and regenerate `terraform.md` files, and how to add a
+module or a new provider. See [AGENTS.md](AGENTS.md) for module
+conventions and design patterns.
 
-### Quick Start
+Quick start:
 
 ```bash
-# Install pre-commit hooks
 pre-commit install
-
-# Format all Terraform files
-docker run --rm -v "$(pwd):/workspace" -w /workspace hashicorp/terraform:1.11 fmt -write=true -recursive
-
-# Generate documentation for all modules
-for provider in cloudflare discord github kubernetes oci; do
-  docker run --rm -v "$(pwd):/workspace" -w /workspace quay.io/terraform-docs/terraform-docs:0.19.0 $provider/
-done
+pre-commit run --all-files
 ```
 
 ## License
 
-Personal use modules - use at your own risk.
+See [LICENSE](LICENSE). These are personal-use modules — use at your own risk.
