@@ -7,7 +7,7 @@ resource "gitlab_project" "repo" {
   import_url = var.import_url
 
   visibility_level = var.visibility_level
-  default_branch   = "main"
+  default_branch   = var.default_branch
 
   ci_push_repository_for_job_token_allowed    = var.ci_push_repository_for_job_token_allowed
   ci_pipeline_variables_minimum_override_role = var.ci_pipeline_variables_minimum_override_role
@@ -21,7 +21,7 @@ resource "gitlab_project" "repo" {
 
 resource "gitlab_branch_protection" "main" {
   project            = gitlab_project.repo.id
-  branch             = "main"
+  branch             = var.default_branch
   push_access_level  = "no one"
   merge_access_level = "maintainer"
   allow_force_push   = false

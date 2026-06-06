@@ -32,6 +32,12 @@ variable "visibility_level" {
   default     = "public"
 }
 
+variable "default_branch" {
+  type        = string
+  description = "Default branch name. Wired into both the project's default_branch and the branch protection rule. Override to import legacy repos whose history is on a non-main branch (e.g. master)."
+  default     = "main"
+}
+
 variable "ci_push_repository_for_job_token_allowed" {
   type        = bool
   description = "Allow CI job token to push to the repository"
