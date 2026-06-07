@@ -20,11 +20,23 @@ resource "gitlab_project" "repo" {
 }
 
 resource "gitlab_branch_protection" "main" {
-  project            = gitlab_project.repo.id
-  branch             = var.default_branch
-  push_access_level  = var.push_access_level
-  merge_access_level = "maintainer"
-  allow_force_push   = false
+  project          = gitlab_project.repo.id
+  branch           = var.default_branch
+  allow_force_push = false
+
+  # gitlab provider v19 replaced the flat push_access_level / merge_access_level
+  # fields with list-of-objects attributes. Single-element lists preserve the
+  # prior behavior.
+  allowed_to_push = [
+    {
+      access_level = var.push_access_level
+    },
+  ]
+  allowed_to_merge = [
+    {
+      access_level = "maintainer"
+    },
+  ]
 }
 
 resource "gitlab_project_push_mirror" "github" {
