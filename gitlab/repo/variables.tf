@@ -60,6 +60,16 @@ variable "only_allow_merge_if_pipeline_succeeds" {
   default     = true
 }
 
+variable "push_access_level" {
+  type        = string
+  description = "Who can push directly to the default branch. Defaults to 'no one' so all changes go through MRs; raise to 'maintainer' to allow emergency direct pushes."
+  default     = "no one"
+  validation {
+    condition     = contains(["no one", "developer", "maintainer", "admin"], var.push_access_level)
+    error_message = "Must be one of: 'no one', developer, maintainer, admin."
+  }
+}
+
 variable "pipeline_variables" {
   type = map(object({
     value         = string

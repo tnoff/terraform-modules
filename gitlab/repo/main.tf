@@ -22,7 +22,7 @@ resource "gitlab_project" "repo" {
 resource "gitlab_branch_protection" "main" {
   project            = gitlab_project.repo.id
   branch             = var.default_branch
-  push_access_level  = "no one"
+  push_access_level  = var.push_access_level
   merge_access_level = "maintainer"
   allow_force_push   = false
 }
