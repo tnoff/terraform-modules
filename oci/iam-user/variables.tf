@@ -44,6 +44,12 @@ variable "user_public_key" {
   description = "Public key to add to user"
 }
 
+variable "enable_api_key" {
+  type        = bool
+  default     = false
+  description = "Force-create the OCI API key. By default the key is created when `user_public_key` is non-empty, but that check breaks at plan time when `user_public_key` is sourced from a sibling resource (e.g. `tls_private_key.X.public_key_pem`) — set this `true` in that case."
+}
+
 variable "user_secret_key" {
   type        = string
   default     = ""

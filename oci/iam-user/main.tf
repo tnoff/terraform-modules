@@ -46,7 +46,7 @@ resource "oci_identity_auth_token" "this" {
 }
 
 resource "oci_identity_api_key" "this" {
-  count     = var.user_public_key == "" ? 0 : 1
+  count     = var.enable_api_key || var.user_public_key != "" ? 1 : 0
   user_id   = oci_identity_user.this.id
   key_value = var.user_public_key
 }
