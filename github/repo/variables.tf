@@ -98,6 +98,12 @@ variable "has_downloads" {
   description = "Enable the downloads feature. Defaults to false for mirrors."
 }
 
+variable "auto_init" {
+  type        = bool
+  default     = false
+  description = "Seed the repo with an initial README on creation. Required for new repos so `github_branch.default` and the paired GitLab mirror's `import_url` have a ref to work against. Defaults to false so existing repos aren't replaced; set to true on the caller for any new repo."
+}
+
 variable "bypass_actors" {
   type = list(object({
     actor_id    = number

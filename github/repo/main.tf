@@ -9,6 +9,15 @@ resource "github_repository" "this" {
   has_downloads          = var.has_downloads
   has_issues             = var.has_issues
   has_wiki               = var.has_wiki
+
+  # Seeds the repo with an initial README on creation so `github_branch.default`
+  # below has a `refs/heads/main` to point at and the paired `gitlab_project`'s
+  # `import_url` has something to mirror. Without this, a brand-new repo
+  # deadlocks: the branch resource fails with `409 Git Repository is empty` and
+  # the GitLab mirror fails with `422 Unable to access repository`. Defaults to
+  # false in the variable so existing repos aren't replaced; set to true on the
+  # caller for any new repo.
+  auto_init = var.auto_init
 }
 
 resource "github_repository_vulnerability_alerts" "this" {
