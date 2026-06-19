@@ -48,7 +48,13 @@ variable "worker_pool_subnet_ocid" {
 variable "node_pool_size" {
   type        = number
   default     = 1
-  description = "Node pool size"
+  description = "Node pool size. When ignore_node_count_changes is true this is only the initial size; the cluster autoscaler owns it thereafter."
+}
+
+variable "ignore_node_count_changes" {
+  type        = bool
+  default     = false
+  description = "When true, terraform stops managing node_config_details.size (it is ignored via lifecycle) so an external Kubernetes Cluster Autoscaler can own the running node count without an apply fighting it. Default false keeps terraform-managed sizing for all existing consumers. Toggling this swaps which underlying resource is used (this <-> this_autoscaled); to avoid recreating a live pool, do a one-time `terraform state mv` between the two addresses in the consuming stack."
 }
 
 variable "memory_in_gbs" {

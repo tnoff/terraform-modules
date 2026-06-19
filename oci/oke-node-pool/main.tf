@@ -40,7 +40,21 @@ EOF
   ) : var.node_metadata
 }
 
+# Node pool is declared twice so that the autoscaled variant can opt out of
+# terraform-managed sizing. `lifecycle.ignore_changes` cannot reference a
+# variable, so the only way to make "ignore node_config_details.size" toggleable
+# is the count/dual-resource pattern: exactly one of these is ever created,
+# selected by var.ignore_node_count_changes. The bodies MUST stay identical
+# apart from the `count` and the `lifecycle` block on the autoscaled variant.
+#
+# `this`            — terraform owns the size (default; all existing consumers).
+# `this_autoscaled` — the Kubernetes Cluster Autoscaler owns the size; terraform
+#                     ignores drift on node_config_details.size so an apply never
+#                     fights the autoscaler. Consume the pool via the coalesced
+#                     `node_pool` output, which resolves whichever one exists.
 resource "oci_containerengine_node_pool" "this" {
+  count = var.ignore_node_count_changes ? 0 : 1
+
   cluster_id         = var.cluster_ocid
   compartment_id     = var.compartment_ocid
   name               = "${var.display_name}-node-pool"
@@ -84,4 +98,59 @@ resource "oci_containerengine_node_pool" "this" {
     boot_volume_size_in_gbs = 50
   }
   ssh_public_key = var.ssh_public_key
+}
+
+resource "oci_containerengine_node_pool" "this_autoscaled" {
+  count = var.ignore_node_count_changes ? 1 : 0
+
+  cluster_id         = var.cluster_ocid
+  compartment_id     = var.compartment_ocid
+  name               = "${var.display_name}-node-pool"
+  node_shape         = var.node_shape
+  kubernetes_version = "v${var.kubernetes_version}"
+
+  dynamic "initial_node_labels" {
+    for_each = var.node_labels
+    content {
+      key   = initial_node_labels.key
+      value = initial_node_labels.value
+    }
+  }
+
+  freeform_tags = var.freeform_tags
+  defined_tags  = var.defined_tags
+  node_metadata = local.node_metadata
+
+  node_config_details {
+    kms_key_id = var.kms_key_ocid
+    placement_configs {
+      availability_domain = var.availability_domain
+      subnet_id           = var.worker_pool_subnet_ocid
+    }
+    size          = var.node_pool_size
+    freeform_tags = var.instance_freeform_tags
+    defined_tags  = var.instance_defined_tags
+    node_pool_pod_network_option_details {
+      cni_type       = "OCI_VCN_IP_NATIVE"
+      pod_subnet_ids = [var.worker_pool_subnet_ocid]
+    }
+  }
+  node_shape_config {
+    memory_in_gbs = var.memory_in_gbs
+    ocpus         = var.num_ocpus
+  }
+  node_source_details {
+    image_id    = var.image_ocid
+    source_type = "image"
+
+    boot_volume_size_in_gbs = 50
+  }
+  ssh_public_key = var.ssh_public_key
+
+  # The autoscaler is the source of truth for the running node count once this
+  # variant is active. Without this, every terraform apply would try to reset
+  # the pool back to var.node_pool_size and undo a burst.
+  lifecycle {
+    ignore_changes = [node_config_details[0].size]
+  }
 }
