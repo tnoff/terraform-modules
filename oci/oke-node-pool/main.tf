@@ -83,8 +83,9 @@ resource "oci_containerengine_node_pool" "this" {
     freeform_tags = var.instance_freeform_tags
     defined_tags  = var.instance_defined_tags
     node_pool_pod_network_option_details {
-      cni_type       = "OCI_VCN_IP_NATIVE"
-      pod_subnet_ids = [var.worker_pool_subnet_ocid]
+      cni_type          = "OCI_VCN_IP_NATIVE"
+      pod_subnet_ids    = [coalesce(var.pod_subnet_ocid, var.worker_pool_subnet_ocid)]
+      max_pods_per_node = var.max_pods_per_node
     }
   }
   node_shape_config {
@@ -131,8 +132,9 @@ resource "oci_containerengine_node_pool" "this_autoscaled" {
     freeform_tags = var.instance_freeform_tags
     defined_tags  = var.instance_defined_tags
     node_pool_pod_network_option_details {
-      cni_type       = "OCI_VCN_IP_NATIVE"
-      pod_subnet_ids = [var.worker_pool_subnet_ocid]
+      cni_type          = "OCI_VCN_IP_NATIVE"
+      pod_subnet_ids    = [coalesce(var.pod_subnet_ocid, var.worker_pool_subnet_ocid)]
+      max_pods_per_node = var.max_pods_per_node
     }
   }
   node_shape_config {

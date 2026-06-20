@@ -42,7 +42,19 @@ variable "availability_domain" {
 
 variable "worker_pool_subnet_ocid" {
   type        = string
-  description = "Subnet OCID for Node Pools"
+  description = "Subnet OCID for Node Pools (node VNIC placement, and pod IPs unless pod_subnet_ocid is set)"
+}
+
+variable "pod_subnet_ocid" {
+  type        = string
+  default     = null
+  description = "Subnet OCID for VCN-native pod IPs. When null (default) pods draw IPs from worker_pool_subnet_ocid (legacy behavior). Set this to a dedicated pod subnet to avoid exhausting the node subnet (OCI_VCN_IP_NATIVE reserves max_pods_per_node IPs per node)."
+}
+
+variable "max_pods_per_node" {
+  type        = number
+  default     = null
+  description = "Max pods per node. Drives how many pod IPs each node pre-reserves from the pod subnet under OCI_VCN_IP_NATIVE. Null (default) uses the OKE/provider default (31)."
 }
 
 variable "node_pool_size" {
