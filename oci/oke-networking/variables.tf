@@ -1,6 +1,6 @@
 variable "compartment_ocid" {
   type        = string
-  description = "Comaprtment OCID"
+  description = "Compartment OCID"
 }
 
 variable "display_name" {
@@ -8,47 +8,38 @@ variable "display_name" {
   description = "Name prefix for all resources"
 }
 
-
 variable "vcn_cidr_block" {
   type        = string
   default     = "10.0.0.0/16"
-  description = "CIDR Block for entire VPC"
-}
-
-variable "worker_subnet_cidr_block" {
-  type        = string
-  default     = "10.0.10.0/24"
-  description = "CIDR Block for worker node subnet"
+  description = "CIDR Block for entire VCN"
 }
 
 variable "node_v2_subnet_cidr_block" {
   type        = string
-  default     = null
-  description = "CIDR Block for the v2 worker-node subnet. When set (alongside pod_subnet_cidr_block), the module provisions a separate node subnet via the oke-subnet module so a new generation of node pools can place node VNICs off the (exhausted) original /24 during a blue-green migration. Null (default) leaves the original 4-subnet topology unchanged."
+  description = "CIDR block for the worker-node VNIC subnet."
 }
 
 variable "pod_subnet_cidr_block" {
   type        = string
-  default     = null
-  description = "CIDR Block for the shared VCN-native pod subnet. When set, the module provisions a dedicated pod subnet via the oke-subnet module. Large (e.g. a /18, ~16k IPs) because OCI_VCN_IP_NATIVE reserves max_pods_per_node IPs per node, not per running pod. Node pools that set pod_subnet_ocid draw pod IPs here instead of from the node/worker subnet. Null (default) leaves the original topology unchanged."
+  description = "CIDR block for the shared VCN-native pod subnet. Large (e.g. a /18, ~16k IPs) because OCI_VCN_IP_NATIVE reserves max_pods_per_node IPs per node, not per running pod."
 }
 
 variable "k8s_api_cidr_block" {
   type        = string
   default     = "10.0.0.0/28"
-  description = "CIDR block for private subnet"
+  description = "CIDR block for the Kubernetes API (control-plane endpoint) subnet"
 }
 
 variable "lb_cidr_block" {
   type        = string
   default     = "10.0.20.0/24"
-  description = "CIDR block for lb subnet"
+  description = "CIDR block for the load-balancer subnet"
 }
 
 variable "bastion_cidr_block" {
   type        = string
   default     = "10.0.30.0/24"
-  description = "CIDR block for bastion hosts"
+  description = "CIDR block for the bastion subnet"
 }
 
 variable "freeform_tags" {

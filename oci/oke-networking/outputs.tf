@@ -1,27 +1,27 @@
 output "vcn" {
-  value = oci_core_vcn.this
+  value = module.vcn.vcn
 }
 
 output "subnet_k8s" {
-  value = oci_core_subnet.this_k8s
-}
-
-output "subnet_worker" {
-  value = oci_core_subnet.this_worker
+  value = module.subnet_api.subnet
 }
 
 output "subnet_node_v2" {
-  value = one(module.subnet_node_v2[*].subnet)
+  value = module.subnet_node_v2.subnet
 }
 
 output "subnet_pods" {
-  value = one(module.subnet_pods[*].subnet)
+  value = module.subnet_pods.subnet
 }
 
 output "subnet_lb" {
-  value = oci_core_subnet.this_lb
+  value = module.subnet_lb.subnet
 }
 
 output "subnet_bastion" {
-  value = oci_core_subnet.this_bastion
+  value = module.subnet_bastion.subnet
+}
+
+output "security_list_ids" {
+  value = module.security_lists.security_list_ids
 }

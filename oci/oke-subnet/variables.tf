@@ -1,6 +1,6 @@
 variable "compartment_ocid" {
   type        = string
-  description = "Compartment OCID for the subnet and its security list"
+  description = "Compartment OCID for the subnet"
 }
 
 variable "vcn_ocid" {
@@ -10,7 +10,7 @@ variable "vcn_ocid" {
 
 variable "display_name" {
   type        = string
-  description = "Display name for the subnet (the security list is named \"<display_name>-sl\")"
+  description = "Display name for the subnet"
 }
 
 variable "dns_label" {
@@ -23,34 +23,15 @@ variable "cidr_block" {
   description = "CIDR block for the subnet"
 }
 
-variable "role" {
-  type        = string
-  description = "Subnet role; selects the baked-in security-list rule set. Implemented roles: 'node' (worker-node VNICs) and 'pods' (VCN-native pod IPs)."
-
-  validation {
-    condition     = contains(["node", "pods"], var.role)
-    error_message = "role must be one of: node, pods. (api/worker/lb/bastion roles are not implemented yet.)"
-  }
-}
-
-variable "peer_cidrs" {
-  type = object({
-    api  = optional(string)
-    node = optional(string)
-    pod  = optional(string)
-    lb   = optional(string)
-  })
-  description = "CIDRs of peer subnets referenced by this subnet's security-list rules. The 'node' and 'pods' roles require all four keys (api, node, pod, lb)."
-}
-
-variable "service_gateway_cidr" {
-  type        = string
-  description = "The 'all <REGION> services' CIDR label of the VCN service gateway, used as the destination for the SERVICE_CIDR_BLOCK egress rule (e.g. tcp 443 to OCI services)."
+variable "security_list_ids" {
+  type        = list(string)
+  description = "OCIDs of the security list(s) to associate with the subnet (created by the oke-security-lists module)"
 }
 
 variable "route_table_ocid" {
   type        = string
-  description = "OCID of the route table to attach to the subnet (typically the private/NAT route table)"
+  default     = null
+  description = "OCID of the route table to attach to the subnet. Null (default) attaches no route table, so the subnet inherits the VCN default route table (e.g. the API/control-plane subnet)."
 }
 
 variable "prohibit_internet_ingress" {
@@ -68,11 +49,11 @@ variable "prohibit_public_ip_on_vnic" {
 variable "freeform_tags" {
   type        = map(any)
   default     = {}
-  description = "Freeform tags for the subnet and security list"
+  description = "Freeform tags for the subnet"
 }
 
 variable "defined_tags" {
   type        = map(string)
   default     = {}
-  description = "Defined tags for the subnet and security list"
+  description = "Defined tags for the subnet"
 }
