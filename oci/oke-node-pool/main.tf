@@ -11,6 +11,13 @@
 # NOTE: osms-agent.service does not exist on current OKE images; OSMS is managed by oracle-cloud-agent-updater.
 # NOTE: Do NOT create a swap file — kubelet refuses to start when swap is enabled.
 locals {
+  # Kubernetes node taints, applied at node registration via kubelet
+  # --register-with-taints (effect uses the k8s spelling, e.g. NoSchedule).
+  # Rendered into the oke-init kubelet flags below, so it only takes effect
+  # when enable_node_init_customizations is true, and only on newly-registered
+  # nodes (recycle existing nodes to adopt).
+  node_taints_kubelet_arg = length(var.node_taints) > 0 ? " --register-with-taints=${join(",", [for t in var.node_taints : "${t.key}=${t.value}:${t.effect}"])}" : ""
+
   node_init_cloud_init = var.enable_node_init_customizations ? base64encode(<<-EOF
 #!/bin/bash
 # 1. Reclaim the full boot volume before kubelet starts.
@@ -18,7 +25,7 @@ locals {
 
 # 2. Run the default OKE init with custom kubelet flags appended.
 curl --fail -H "Authorization: Bearer Oracle" -L0 http://169.254.169.254/opc/v2/instance/metadata/oke_init_script | base64 --decode >/var/run/oke-init.sh
-bash /var/run/oke-init.sh --kubelet-extra-args "--image-gc-high-threshold=${var.image_gc_high_threshold_percent} --image-gc-low-threshold=${var.image_gc_low_threshold_percent}"
+bash /var/run/oke-init.sh --kubelet-extra-args "--image-gc-high-threshold=${var.image_gc_high_threshold_percent} --image-gc-low-threshold=${var.image_gc_low_threshold_percent}${local.node_taints_kubelet_arg}"
 
 # 3. Cap oracle-cloud-agent-updater memory so dnf is OOM-killed before Kubernetes pods are.
 mkdir -p /etc/systemd/system/oracle-cloud-agent-updater.service.d

@@ -166,3 +166,13 @@ variable "node_metadata" {
   default     = {}
   description = "Additional metadata key/value pairs to add to each node instance"
 }
+
+variable "node_taints" {
+  type = list(object({
+    key    = string
+    value  = string
+    effect = string
+  }))
+  default     = []
+  description = "Kubernetes node taints applied at node registration via kubelet --register-with-taints. effect uses the k8s spelling (NoSchedule / PreferNoSchedule / NoExecute). Only applied when enable_node_init_customizations is true, and only to newly-registered nodes — recycle existing nodes to adopt a new taint."
+}
