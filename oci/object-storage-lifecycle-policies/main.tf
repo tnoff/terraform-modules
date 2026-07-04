@@ -16,5 +16,6 @@ resource "oci_identity_policy" "this" {
   compartment_id = var.tenancy_ocid
   description    = "object storage lifecycle admin policies"
   name           = "object-storage-lifecycle"
+  freeform_tags  = var.freeform_tags
   statements     = local.statements
 }

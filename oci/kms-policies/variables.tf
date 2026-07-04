@@ -23,3 +23,9 @@ variable "oke_cluster_compartment_ids" {
   description = "List of compartment OCIDs containing OKE clusters that need KMS access via resource principals"
   default     = []
 }
+
+variable "freeform_tags" {
+  type        = map(string)
+  description = "Freeform tags applied to the identity policies"
+  default     = {}
+}

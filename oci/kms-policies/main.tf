@@ -8,6 +8,7 @@ data "oci_identity_region_subscriptions" "this" {
 resource "oci_identity_policy" "kms_object_storage_policy" {
   compartment_id = var.oci_tenancy_ocid
   name           = "kms-object-storage-policy"
+  freeform_tags  = var.freeform_tags
   description    = "Allow Object Storage to use KMS keys for encryption"
 
   statements = flatten(flatten([
@@ -22,6 +23,7 @@ resource "oci_identity_policy" "kms_object_storage_policy" {
 resource "oci_identity_policy" "kms_oke_policies" {
   compartment_id = var.oci_tenancy_ocid
   name           = "kms-oke-policy"
+  freeform_tags  = var.freeform_tags
   description    = "Allow OKE and other compute resources to use KMS keys for encryption"
 
   statements = [
@@ -46,6 +48,7 @@ resource "oci_identity_policy" "kms_oke_cluster_resource_principal" {
   count          = length(var.oke_cluster_compartment_ids) > 0 ? 1 : 0
   compartment_id = var.oci_tenancy_ocid
   name           = "kms-oke-cluster-resource-principal-policy"
+  freeform_tags  = var.freeform_tags
   description    = "Allow OKE cluster resource principals to use KMS keys for encryption"
 
   statements = concat([

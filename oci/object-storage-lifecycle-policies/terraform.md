@@ -28,6 +28,7 @@ No modules.
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_compartment_ocids"></a> [compartment\_ocids](#input\_compartment\_ocids) | List of compartment ocids for policies | `list(string)` | n/a | yes |
+| <a name="input_freeform_tags"></a> [freeform\_tags](#input\_freeform\_tags) | Freeform tags applied to the identity policy | `map(string)` | `{}` | no |
 | <a name="input_tenancy_ocid"></a> [tenancy\_ocid](#input\_tenancy\_ocid) | OCID of tenancy | `string` | n/a | yes |
 
 ## Outputs

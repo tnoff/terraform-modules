@@ -29,6 +29,7 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
+| <a name="input_freeform_tags"></a> [freeform\_tags](#input\_freeform\_tags) | Freeform tags applied to the identity policies | `map(string)` | `{}` | no |
 | <a name="input_kms_key_compartment_name"></a> [kms\_key\_compartment\_name](#input\_kms\_key\_compartment\_name) | Compartment Name for KMS Key lives | `string` | n/a | yes |
 | <a name="input_kms_key_ocid"></a> [kms\_key\_ocid](#input\_kms\_key\_ocid) | OCI KMS Key OCID | `string` | n/a | yes |
 | <a name="input_oci_tenancy_ocid"></a> [oci\_tenancy\_ocid](#input\_oci\_tenancy\_ocid) | OCI Tenancy OCID | `string` | n/a | yes |
