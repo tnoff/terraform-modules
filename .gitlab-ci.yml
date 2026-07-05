@@ -56,7 +56,7 @@ trufflehog:
       when: manual
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
 
-notify-mr:
+"notify:mr-opened":
   extends: .discord-notify
   stage: notify
   needs: []
@@ -70,7 +70,7 @@ notify-mr:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
       when: always
 
-notify-merged:
+"notify:merged":
   extends: .discord-notify
   stage: notify
   needs: []
@@ -87,7 +87,7 @@ renovate:
   rules:
     - if: $CI_PIPELINE_SOURCE == "schedule"
 
-notify-renovate-failure:
+"notify:renovate-failure":
   extends: .discord-notify
   stage: renovate
   needs: [renovate]
@@ -113,7 +113,7 @@ branch-cleanup:
   rules:
     - if: $CI_PIPELINE_SOURCE == "schedule"
 
-notify-cleanup-failure:
+"notify:cleanup-failure":
   extends: .discord-notify
   stage: renovate
   needs: [branch-cleanup]
