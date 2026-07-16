@@ -1,15 +1,15 @@
 include:
   - project: 'tnoff-projects/github-workflows'
-    ref: 616a6485da3e2bc493ea25db2449378a5b1666fc
+    ref: b0c827a5aef955ca22080b534519039d563d6f62
     file: '/gitlab/discord-notify.yml'
   - project: 'tnoff-projects/github-workflows'
-    ref: 616a6485da3e2bc493ea25db2449378a5b1666fc
+    ref: b0c827a5aef955ca22080b534519039d563d6f62
     file: '/gitlab/renovate.yml'
   - project: 'tnoff-projects/github-workflows'
-    ref: 616a6485da3e2bc493ea25db2449378a5b1666fc
+    ref: b0c827a5aef955ca22080b534519039d563d6f62
     file: '/gitlab/branch-cleanup.yml'
   - project: 'tnoff-projects/github-workflows'
-    ref: 616a6485da3e2bc493ea25db2449378a5b1666fc
+    ref: b0c827a5aef955ca22080b534519039d563d6f62
     file: '/gitlab/trufflehog.yml'
 
 default:
