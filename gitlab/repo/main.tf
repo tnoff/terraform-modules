@@ -12,6 +12,8 @@ resource "gitlab_project" "repo" {
   ci_push_repository_for_job_token_allowed    = var.ci_push_repository_for_job_token_allowed
   ci_pipeline_variables_minimum_override_role = var.ci_pipeline_variables_minimum_override_role
 
+  auto_cancel_pending_pipelines = var.auto_cancel_pending_pipelines
+
   merge_method                          = "ff"
   squash_option                         = "default_on"
   remove_source_branch_after_merge      = true

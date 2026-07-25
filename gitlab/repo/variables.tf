@@ -60,6 +60,16 @@ variable "only_allow_merge_if_pipeline_succeeds" {
   default     = true
 }
 
+variable "auto_cancel_pending_pipelines" {
+  type        = string
+  description = "Auto-cancel older pending pipelines on a ref when a newer pipeline starts. \"enabled\" or \"disabled\"."
+  default     = "enabled"
+  validation {
+    condition     = contains(["enabled", "disabled"], var.auto_cancel_pending_pipelines)
+    error_message = "Must be one of: enabled, disabled."
+  }
+}
+
 variable "push_access_level" {
   type        = string
   description = "Who can push directly to the default branch. Defaults to 'no one' so all changes go through MRs; raise to 'maintainer' to allow emergency direct pushes."

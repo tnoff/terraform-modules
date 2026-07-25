@@ -30,6 +30,7 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
+| <a name="input_auto_cancel_pending_pipelines"></a> [auto\_cancel\_pending\_pipelines](#input\_auto\_cancel\_pending\_pipelines) | Auto-cancel older pending pipelines on a ref when a newer pipeline starts. "enabled" or "disabled". | `string` | `"enabled"` | no |
 | <a name="input_ci_pipeline_variables_minimum_override_role"></a> [ci\_pipeline\_variables\_minimum\_override\_role](#input\_ci\_pipeline\_variables\_minimum\_override\_role) | Minimum role allowed to override CI/CD variables when running a pipeline. Also gates pipeline trigger tokens passing variables[...] on cross-project triggers. | `string` | `"no_one_allowed"` | no |
 | <a name="input_ci_push_repository_for_job_token_allowed"></a> [ci\_push\_repository\_for\_job\_token\_allowed](#input\_ci\_push\_repository\_for\_job\_token\_allowed) | Allow CI job token to push to the repository | `bool` | `true` | no |
 | <a name="input_default_branch"></a> [default\_branch](#input\_default\_branch) | Default branch name. Wired into both the project's default\_branch and the branch protection rule. Override to import legacy repos whose history is on a non-main branch (e.g. master). | `string` | `"main"` | no |
