@@ -19,6 +19,33 @@ resource "gitlab_project" "repo" {
   remove_source_branch_after_merge      = true
   only_allow_merge_if_pipeline_succeeds = var.only_allow_merge_if_pipeline_succeeds
   allow_merge_on_skipped_pipeline       = false
+
+  # Destroying a gitlab_project deletes the repository and everything GitLab
+  # holds for it -- issues, MRs, CI history, registry images. Nothing else this
+  # module manages is comparable: branch protection, schedules, variables and
+  # the push mirror are all cheap to recreate, so the guard sits here only.
+  #
+  # This is not hypothetical tidiness. Consumers include the projects that hold
+  # the terraform stacks themselves, so an accidental destroy can take out the
+  # repo you would fix it from.
+  #
+  # prevent_destroy takes a literal, so it cannot be exposed as a variable --
+  # it is all consumers or none, deliberately. It refuses any plan that would
+  # destroy OR replace this resource, which also means it blocks a forced
+  # replacement (e.g. a namespace transfer). To retire a repo on purpose:
+  #
+  #   removed {
+  #     from    = module.<name>_gitlab
+  #     destroy = false          # release from state, leave the project alive
+  #   }
+  #
+  # then delete the project by hand. That is the same release-without-destroy
+  # pattern terraform/apps used to hand the flux-system-https Secret over to the
+  # bootstrap stack. Removing this block to force a destroy is always the wrong
+  # first move.
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 resource "gitlab_branch_protection" "main" {
