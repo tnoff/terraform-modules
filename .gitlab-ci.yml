@@ -1,12 +1,12 @@
 include:
   - project: 'tnoff-projects/github-workflows'
-    ref: c33d172e8bd7d622c3c4cdfca7b21bef07d5776b
+    ref: e410a65c9ab14c946834ad194d9ddef5a3bc611f
     file: '/gitlab/renovate.yml'
   - project: 'tnoff-projects/github-workflows'
-    ref: c33d172e8bd7d622c3c4cdfca7b21bef07d5776b
+    ref: e410a65c9ab14c946834ad194d9ddef5a3bc611f
     file: '/gitlab/branch-cleanup.yml'
   - project: 'tnoff-projects/github-workflows'
-    ref: c33d172e8bd7d622c3c4cdfca7b21bef07d5776b
+    ref: e410a65c9ab14c946834ad194d9ddef5a3bc611f
     file: '/gitlab/trufflehog.yml'
 
 default:
