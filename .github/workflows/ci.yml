@@ -1,0 +1,110 @@
+name: CI
+
+# Pull-request checks, ported from .gitlab-ci.yml's validate stage.
+#
+# Only trufflehog comes from tnoff/github-workflows. The other two jobs have no
+# reusable counterpart -- this is the only terraform repo in the fleet -- so
+# they are inline, the same call made for oci-bastion-keepalive's lint and
+# dependency jobs.
+
+on:
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  secrets:
+    name: Scan for secrets
+    uses: tnoff/github-workflows/.github/workflows/trufflehog.yml@c97852c991d7a4562844df68ab16717dfda54dd7
+
+  # fmt + validate. Deliberately a SEPARATE JOB from docs below, and that
+  # separation is load-bearing rather than tidiness: `terraform init` writes a
+  # .terraform.lock.hcl, and once a lock file exists terraform-docs renders the
+  # RESOLVED provider version (6.13.0) instead of the constraint (~> 6.0) that
+  # is committed. Sharing a workspace makes the docs check fail with what looks
+  # exactly like real drift. Observed locally while preparing this port.
+  validate:
+    name: Terraform fmt and validate
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@dfe3c3f87815947d99a8997f908cb6525fc44e9e  # v4.0.1
+        with:
+          # Matches the hashicorp/terraform:1.15 image the GitLab job used.
+          terraform_version: '1.15.*'
+          # Without this the action wraps terraform in a script that swallows
+          # the exit code, so a failing fmt/validate would report success.
+          terraform_wrapper: false
+
+      - name: terraform fmt
+        run: terraform fmt -check -recursive
+
+      # The GitLab job ran a bare `terraform validate` at the repo root. There
+      # are no .tf files at the root, so it validated an EMPTY configuration and
+      # printed "Success! The configuration is valid." every time -- the job's
+      # real coverage was fmt alone. Verified by running it locally against a
+      # clean checkout.
+      #
+      # This validates each module directory for real: 22 of them, all passing
+      # as of this commit. TF_PLUGIN_CACHE_DIR is what makes that affordable --
+      # oracle/oci alone is ~200MB and is used by 13 of the 22.
+      - name: terraform validate (per module)
+        env:
+          TF_PLUGIN_CACHE_DIR: ${{ runner.temp }}/tf-plugin-cache
+        run: |
+          set -euo pipefail
+          mkdir -p "${TF_PLUGIN_CACHE_DIR}"
+          failed=0
+          while IFS= read -r dir; do
+            echo "::group::${dir}"
+            if (cd "${dir}" && terraform init -backend=false -input=false >/dev/null && terraform validate -no-color); then
+              echo "ok"
+            else
+              echo "::error file=${dir}::terraform validate failed"
+              failed=1
+            fi
+            echo "::endgroup::"
+          done < <(find . -name '*.tf' -not -path '*/.terraform/*' -printf '%h\n' | sort -u)
+          exit "${failed}"
+
+  # terraform-docs --output-check, one leg per provider directory. Run through
+  # docker rather than a marketplace action so the image pin stays identical to
+  # the one the GitLab job used.
+  #
+  # NOTE: gitlab/ is new to this matrix. The GitLab job listed only cloudflare,
+  # discord, github, kubernetes and oci -- but .pre-commit-config.yaml has
+  # always covered gitlab/ too, so CI was the odd one out and gitlab/repo's
+  # terraform.md was never checked by anything but a local hook run. It passes
+  # today; verified before adding it.
+  docs:
+    name: terraform-docs (${{ matrix.provider }})
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        provider: [cloudflare, discord, github, gitlab, kubernetes, oci]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
+
+      - name: Check generated docs are current
+        env:
+          PROVIDER_DIR: ${{ matrix.provider }}
+        run: |
+          set -euo pipefail
+          docker run --rm --entrypoint "" \
+            -v "${PWD}:/workspace" -w /workspace \
+            quay.io/terraform-docs/terraform-docs:0.20.0 \
+            terraform-docs --output-check "${PROVIDER_DIR}/"
