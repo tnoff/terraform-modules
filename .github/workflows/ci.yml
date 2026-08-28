@@ -108,3 +108,38 @@ jobs:
             -v "${PWD}:/workspace" -w /workspace \
             quay.io/terraform-docs/terraform-docs:0.20.0 \
             terraform-docs --output-check "${PROVIDER_DIR}/"
+
+  result:
+    name: CI result
+    # The stable name for the branch ruleset to require.
+    #
+    # The docs matrix is a literal list of provider directories, so requiring
+    # `terraform-docs (gitlab)` by name couples the ruleset to that list: a
+    # required check that never reports blocks merging indefinitely, so
+    # removing a provider directory would brick main until terraform caught
+    # up. Retiring `gitlab/` is a live prospect as the GitHub migration
+    # finishes, which makes that a real failure mode rather than a
+    # theoretical one.
+    #
+    # This job always runs and its name never changes, so the ruleset can
+    # require it and the matrix stays free to change.
+    if: always()
+    needs: [secrets, validate, docs]
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+    steps:
+      - name: Summarise
+        run: |
+          echo "secrets:  ${{ needs.secrets.result }}"
+          echo "validate: ${{ needs.validate.result }}"
+          echo "docs:     ${{ needs.docs.result }}"
+
+      - name: Fail if any job failed
+        if: >-
+          needs.secrets.result == 'failure' || needs.secrets.result == 'cancelled' ||
+          needs.validate.result == 'failure' || needs.validate.result == 'cancelled' ||
+          needs.docs.result == 'failure' || needs.docs.result == 'cancelled'
+        run: |
+          echo "::error::One or more CI jobs did not pass."
+          exit 1
