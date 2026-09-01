@@ -62,6 +62,12 @@ variable "allow_auto_merge" {
   description = "Allow auto-merge on pull requests"
 }
 
+variable "allow_update_branch" {
+  type        = bool
+  default     = false
+  description = "Always suggest updating pull request branches. Under a ruleset with strict_required_status_checks_policy, a PR whose base has moved is BEHIND and cannot merge; GitHub's auto-merge does not update it on its own, so Renovate PRs sit green-and-approved until Renovate's next run rebases them. Defaults to false, matching the provider, so turning it on is a per-repo decision."
+}
+
 variable "collaborators" {
   type        = map(string)
   default     = {}
