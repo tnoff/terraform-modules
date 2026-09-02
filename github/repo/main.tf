@@ -4,6 +4,7 @@ resource "github_repository" "this" {
 
   visibility             = var.is_public == true ? "public" : "private"
   allow_auto_merge       = var.allow_auto_merge
+  allow_update_branch    = var.allow_update_branch
   allow_merge_commit     = false
   delete_branch_on_merge = true
   has_downloads          = var.has_downloads
