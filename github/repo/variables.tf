@@ -64,8 +64,8 @@ variable "allow_auto_merge" {
 
 variable "allow_update_branch" {
   type        = bool
-  default     = false
-  description = "Always suggest updating pull request branches. Under a ruleset with strict_required_status_checks_policy, a PR whose base has moved is BEHIND and cannot merge; GitHub's auto-merge does not update it on its own, so Renovate PRs sit green-and-approved until Renovate's next run rebases them. Defaults to false, matching the provider, so turning it on is a per-repo decision."
+  default     = true
+  description = "Always suggest updating pull request branches. Under a ruleset with strict_required_status_checks_policy, a PR whose base has moved is BEHIND and cannot merge, and GitHub's auto-merge will not update it unless this is set -- seven bot PRs were stuck that way fleet-wide on 2026-08-31, the oldest for four days. Defaults to TRUE, against the provider default, because every repo here carries that ruleset and none of them wants the stall. Measured on dappertable#130 before the rollout: with the flag on, GitHub created the merge commit itself and auto-merge completed. Note the flag is inert on a repo with no ruleset -- nothing then requires an up-to-date branch -- which is every private repo on this account, since rulesets need GitHub Pro."
 }
 
 variable "collaborators" {
