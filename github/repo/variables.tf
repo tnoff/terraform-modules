@@ -116,6 +116,12 @@ variable "required_approving_review_count" {
   description = "Approving reviews required before a PR can merge. The provider default is 0, and 0 is why require_code_owner_review below does nothing: the code-owner requirement is a sub-condition of requiring approvals, so with no approval required there is none for an owner to qualify. Measured 2026-09-02 on discord-bot#904 -- reviewDecision: null, no review required. Set to 1 to make both real, which is also what makes GitHub request review from the CODEOWNERS entry (that request is NOT being sent today). Note a solo maintainer cannot approve their own PR, so at 1 their own PRs fall to the Admin bypass_actor; a bot's PRs are unaffected, since the owner approving a bot PR is not self-approval."
 }
 
+variable "restrict_updates" {
+  type        = bool
+  default     = false
+  description = "Restrict updates to the matching refs to bypass actors only. This is what makes \"tnoff-robot cannot merge\" enforced rather than merely configured: merging a PR updates the default branch, so with this on, only the Admin bypass_actor can do it -- no workflow change or misconfiguration can hand the ability back. Defaults to false because it forecloses platform automerge entirely; a repo that wants Renovate to merge itself must leave this off."
+}
+
 variable "bypass_actors" {
   type = list(object({
     actor_id    = number

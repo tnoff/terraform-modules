@@ -111,6 +111,7 @@ resource "github_repository_ruleset" "this" {
     deletion                = true
     non_fast_forward        = true
     required_linear_history = false
+    update                  = var.restrict_updates
 
     pull_request {
       dismiss_stale_reviews_on_push     = true
