@@ -111,11 +111,13 @@ resource "github_repository_ruleset" "this" {
     deletion                = true
     non_fast_forward        = true
     required_linear_history = false
+    update                  = var.restrict_updates
 
     pull_request {
       dismiss_stale_reviews_on_push     = true
       require_code_owner_review         = true
       required_review_thread_resolution = false
+      required_approving_review_count   = var.required_approving_review_count
     }
 
     dynamic "required_status_checks" {
