@@ -20,7 +20,7 @@ permissions:
 jobs:
   secrets:
     name: Scan for secrets
-    uses: tnoff/github-workflows/.github/workflows/trufflehog.yml@c97852c991d7a4562844df68ab16717dfda54dd7
+    uses: tnoff/github-workflows/.github/workflows/trufflehog.yml@3326ac29c672f67bce33272b3a09fe06c9947080
 
   # fmt + validate. Deliberately a SEPARATE JOB from docs below, and that
   # separation is load-bearing rather than tidiness: `terraform init` writes a
