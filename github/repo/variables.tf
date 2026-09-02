@@ -110,6 +110,12 @@ variable "auto_init" {
   description = "Seed the repo with an initial README on creation. Required for new repos so `github_branch.default` and the paired GitLab mirror's `import_url` have a ref to work against. Defaults to false so existing repos aren't replaced; set to true on the caller for any new repo."
 }
 
+variable "required_approving_review_count" {
+  type        = number
+  default     = 0
+  description = "Approving reviews required before a PR can merge. The provider default is 0, and 0 is why require_code_owner_review below does nothing: the code-owner requirement is a sub-condition of requiring approvals, so with no approval required there is none for an owner to qualify. Measured 2026-09-02 on discord-bot#904 -- reviewDecision: null, no review required. Set to 1 to make both real, which is also what makes GitHub request review from the CODEOWNERS entry (that request is NOT being sent today). Note a solo maintainer cannot approve their own PR, so at 1 their own PRs fall to the Admin bypass_actor; a bot's PRs are unaffected, since the owner approving a bot PR is not self-approval."
+}
+
 variable "bypass_actors" {
   type = list(object({
     actor_id    = number

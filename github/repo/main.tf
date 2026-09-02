@@ -116,6 +116,7 @@ resource "github_repository_ruleset" "this" {
       dismiss_stale_reviews_on_push     = true
       require_code_owner_review         = true
       required_review_thread_resolution = false
+      required_approving_review_count   = var.required_approving_review_count
     }
 
     dynamic "required_status_checks" {

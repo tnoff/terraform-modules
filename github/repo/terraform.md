@@ -54,6 +54,7 @@ No modules.
 | <a name="input_repo_description"></a> [repo\_description](#input\_repo\_description) | Description for repository | `string` | n/a | yes |
 | <a name="input_repo_labels"></a> [repo\_labels](#input\_repo\_labels) | Key/Value pair of label name and color | `map(any)` | `{}` | no |
 | <a name="input_repo_name"></a> [repo\_name](#input\_repo\_name) | Name of repository | `string` | n/a | yes |
+| <a name="input_required_approving_review_count"></a> [required\_approving\_review\_count](#input\_required\_approving\_review\_count) | Approving reviews required before a PR can merge. The provider default is 0, and 0 is why require\_code\_owner\_review below does nothing: the code-owner requirement is a sub-condition of requiring approvals, so with no approval required there is none for an owner to qualify. Measured 2026-09-02 on discord-bot#904 -- reviewDecision: null, no review required. Set to 1 to make both real, which is also what makes GitHub request review from the CODEOWNERS entry (that request is NOT being sent today). Note a solo maintainer cannot approve their own PR, so at 1 their own PRs fall to the Admin bypass\_actor; a bot's PRs are unaffected, since the owner approving a bot PR is not self-approval. | `number` | `0` | no |
 | <a name="input_required_status_checks"></a> [required\_status\_checks](#input\_required\_status\_checks) | List of default status checks that must pass before merge | `list(string)` | `[]` | no |
 | <a name="input_topics"></a> [topics](#input\_topics) | List of repo topics | `list(string)` | `[]` | no |
 
