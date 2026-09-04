@@ -67,7 +67,7 @@ Regenerate all docs without committing:
 ```bash
 for provider in cloudflare discord github gitlab kubernetes oci; do
   docker run --rm -v "$(pwd):/workspace" -w /workspace \
-    quay.io/terraform-docs/terraform-docs:0.19.0 ${provider}/
+    quay.io/terraform-docs/terraform-docs:0.20.0 ${provider}/
 done
 ```
 
@@ -75,7 +75,7 @@ Regenerate one provider:
 
 ```bash
 docker run --rm -v "$(pwd):/workspace" -w /workspace \
-  quay.io/terraform-docs/terraform-docs:0.19.0 oci/
+  quay.io/terraform-docs/terraform-docs:0.20.0 oci/
 ```
 
 ### Why lockfile is disabled in terraform-docs
@@ -116,15 +116,52 @@ Two things about that script are worth knowing before editing it:
   pre-commit hooks use. It executes *inside* the Renovate container,
   which has no Docker socket mounted, so `docker run` is not available
   to it. Same generator, different delivery.
-* Its pinned version has to match the image pinned in
-  `.github/workflows/ci.yml`, because satisfying that job is the entire
-  point. Note the two are already ahead of `.pre-commit-config.yaml`,
-  which still pins 0.19.0.
+* Its pinned version has to match every other terraform-docs pin in the
+  repo, because satisfying the CI job is the entire point and the output
+  changes between minor versions. `ci/check-terraform-docs-pins.sh`
+  enforces this — see below.
 
 The command string in `renovate.json` must also match the allowlist
 regex in the shared `renovate.yml` workflow byte for byte. Renovate
 refuses to run `postUpgradeTasks` shell unless the *self-hosted* config
 allowlists it; a repo cannot authorize its own commands.
+
+## Keeping the terraform-docs version in sync
+
+terraform-docs output changes between minor versions, so every pin in this
+repo has to name the same one. When they disagree, the tool that generates
+a `terraform.md` and the tool that checks it are different programs, and
+you get a PR that fails `terraform-docs (<provider>)` on a file you just
+regenerated. That is not hypothetical: `.pre-commit-config.yaml` sat on
+0.19.0 while CI used 0.20.0, so `pre-commit run --all-files` could produce
+docs CI would reject.
+
+`ci/check-terraform-docs-pins.sh` enforces it, and runs in CI as the
+`terraform-docs pins agree` job. It asserts that:
+
+* every pin found anywhere in the repo names the same version — image pins,
+  the download script's `TERRAFORM_DOCS_VERSION`, and the release URLs;
+* the files that must carry a pin still do, so one cannot quietly vanish;
+* the checksums in `ci/renovate-terraform-docs.sh` are the ones the release
+  actually publishes for that version.
+
+**To bump the version**, change it everywhere and run the check — it prints
+the expected checksums when they are stale, so paste those in:
+
+```bash
+./ci/check-terraform-docs-pins.sh
+```
+
+The pins currently live in `.github/workflows/ci.yml`,
+`.pre-commit-config.yaml` (six hooks), `.pre-commit-scripts/check-terraform-docs.sh`,
+`ci/renovate-terraform-docs.sh`, `.gitlab-ci.yml`, and the examples in this
+file and `AGENTS.md`. Do not hand-maintain that list — the check discovers
+them.
+
+Renovate deliberately does *not* bump these automatically. It would move the
+image pins without touching the checksums beside them, and every such PR
+would fail this check until a human fixed it by hand. Bumping terraform-docs
+is a manual, deliberate act.
 
 ## Adding a new module
 
@@ -157,7 +194,7 @@ allowlists it; a repo cannot authorize its own commands.
    - id: terraform-docs
      name: terraform-docs-aws
      language: docker_image
-     entry: quay.io/terraform-docs/terraform-docs:0.19.0
+     entry: quay.io/terraform-docs/terraform-docs:0.20.0
      args: ["aws/"]
      pass_filenames: false
    ```

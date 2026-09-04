@@ -75,7 +75,7 @@ existing entries.
 
 Both `terraform fmt` and `terraform-docs` run inside Docker containers
 so versions stay pinned (`hashicorp/terraform:1.11`,
-`quay.io/terraform-docs/terraform-docs:0.19.0`). Docker must be running
+`quay.io/terraform-docs/terraform-docs:0.20.0`). Docker must be running
 locally before `git commit`.
 
 ## Module design patterns
