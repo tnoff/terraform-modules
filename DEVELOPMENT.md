@@ -95,6 +95,37 @@ if the working tree changed afterward — useful for CI checks:
 ./.pre-commit-scripts/check-terraform-docs.sh <provider-dir>
 ```
 
+## Renovate regenerates the docs for you
+
+Dependency PRs keep their own docs current. `renovate.json` registers
+`ci/renovate-terraform-docs.sh` as a `postUpgradeTasks` command, so
+Renovate re-runs the generator on its branch and folds any `terraform.md`
+change into the same commit as the bump.
+
+This is not a nicety. Each module's Providers table renders the version
+*constraint* out of its `provider.tf`, so a plain constraint bump
+(`~> 8.0` -> `~> 9.0`) staleness the docs in every module using that
+provider while touching no variable, output or resource — 13 modules at
+once in #50. Renovate has no way to infer that; only re-running
+`terraform-docs` fixes it.
+
+Two things about that script are worth knowing before editing it:
+
+* It downloads the `terraform-docs` binary instead of running the
+  `quay.io/terraform-docs/terraform-docs` image that CI and the
+  pre-commit hooks use. It executes *inside* the Renovate container,
+  which has no Docker socket mounted, so `docker run` is not available
+  to it. Same generator, different delivery.
+* Its pinned version has to match the image pinned in
+  `.github/workflows/ci.yml`, because satisfying that job is the entire
+  point. Note the two are already ahead of `.pre-commit-config.yaml`,
+  which still pins 0.19.0.
+
+The command string in `renovate.json` must also match the allowlist
+regex in the shared `renovate.yml` workflow byte for byte. Renovate
+refuses to run `postUpgradeTasks` shell unless the *self-hosted* config
+allowlists it; a repo cannot authorize its own commands.
+
 ## Adding a new module
 
 1. Create the directory under the appropriate provider:
@@ -131,7 +162,11 @@ if the working tree changed afterward — useful for CI checks:
      pass_filenames: false
    ```
 
-3. Add a `Provider Configuration` block to [README.md](README.md) with
+3. Add a leg to the `docs` matrix in
+   [.github/workflows/ci.yml](.github/workflows/ci.yml), which lists the
+   provider directories literally. `ci/renovate-terraform-docs.sh` works
+   its own list out from the tree and needs no change.
+4. Add a `Provider Configuration` block to [README.md](README.md) with
    the provider requirements and an example.
 
 ## Branch and remote layout
