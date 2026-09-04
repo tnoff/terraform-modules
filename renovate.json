@@ -1,5 +1,11 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": ["github>tnoff/github-workflows//renovate/default-github"],
-  "enabledManagers": ["terraform", "pre-commit", "github-actions", "custom.regex"]
+  "enabledManagers": ["terraform", "pre-commit", "github-actions", "custom.regex"],
+  "postUpgradeTasks": {
+    "description": "Regenerate terraform.md after a dependency bump. Each module's Providers table renders the version CONSTRAINT from its provider.tf, so a bare `~> 8.0` -> `~> 9.0` bump staleness the docs in every module using that provider and CI's terraform-docs job fails the PR (#50, 13 modules at once). Renovate has no way to infer that, so the generator has to re-run.\n\nThe command must match the allowlist regex in the shared renovate.yml workflow's `allowed_commands` byte for byte -- postUpgrade shell is refused unless the SELF-HOSTED config allowlists it, and a repo's renovate.json cannot authorize its own commands. That allowlist has always named this exact path; the script is what was missing.\n\nexecutionMode is `branch` rather than the default `update`: the script regenerates all six provider directories whatever changed, so running it once per branch instead of once per upgrade is strictly cheaper on a grouped PR.",
+    "commands": ["bash ci/renovate-terraform-docs.sh"],
+    "fileFilters": ["**/terraform.md"],
+    "executionMode": "branch"
+  }
 }
