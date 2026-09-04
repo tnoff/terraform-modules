@@ -109,6 +109,23 @@ jobs:
             quay.io/terraform-docs/terraform-docs:0.20.0 \
             terraform-docs --output-check "${PROVIDER_DIR}/"
 
+  # Asserts every terraform-docs pin in the repo agrees, and that the checksums
+  # in ci/renovate-terraform-docs.sh belong to the pinned version. Its own job
+  # rather than a step on `validate` because it is unrelated to terraform, and
+  # rather than a step on `docs` because that is a 6-way matrix and this needs
+  # to run once.
+  pins:
+    name: terraform-docs pins agree
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+
+      - name: Check terraform-docs pins
+        run: ./ci/check-terraform-docs-pins.sh
+
   result:
     name: CI result
     # The stable name for the branch ruleset to require.
@@ -124,7 +141,7 @@ jobs:
     # This job always runs and its name never changes, so the ruleset can
     # require it and the matrix stays free to change.
     if: always()
-    needs: [secrets, validate, docs]
+    needs: [secrets, validate, docs, pins]
     runs-on: ubuntu-24.04
     permissions:
       contents: read
@@ -134,12 +151,14 @@ jobs:
           echo "secrets:  ${{ needs.secrets.result }}"
           echo "validate: ${{ needs.validate.result }}"
           echo "docs:     ${{ needs.docs.result }}"
+          echo "pins:     ${{ needs.pins.result }}"
 
       - name: Fail if any job failed
         if: >-
           needs.secrets.result == 'failure' || needs.secrets.result == 'cancelled' ||
           needs.validate.result == 'failure' || needs.validate.result == 'cancelled' ||
-          needs.docs.result == 'failure' || needs.docs.result == 'cancelled'
+          needs.docs.result == 'failure' || needs.docs.result == 'cancelled' ||
+          needs.pins.result == 'failure' || needs.pins.result == 'cancelled'
         run: |
           echo "::error::One or more CI jobs did not pass."
           exit 1

@@ -17,10 +17,11 @@
 # quay.io/terraform-docs/terraform-docs` invocation that CI and
 # .pre-commit-config.yaml both use. Same generator, different delivery.
 #
-# The version below MUST track .github/workflows/ci.yml's image pin. CI is the
-# thing this script is trying to satisfy, and terraform-docs output does change
-# between minor versions -- 0.19.0, which .pre-commit-config.yaml still pins,
-# is NOT interchangeable with it.
+# The version below MUST track every other terraform-docs pin in the repo. CI is
+# the thing this script is trying to satisfy, and terraform-docs output changes
+# between minor versions, so a mismatch means locally generated docs get
+# rejected by CI. ci/check-terraform-docs-pins.sh enforces that they all agree
+# and that the checksums below belong to this version -- run it after any bump.
 
 set -euo pipefail
 

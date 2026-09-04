@@ -16,7 +16,7 @@ fi
 if docker run --rm \
     -v "$(pwd):/workspace" \
     -w /workspace \
-    quay.io/terraform-docs/terraform-docs:0.19.0 \
+    quay.io/terraform-docs/terraform-docs:0.20.0 \
     --output-check \
     "$PROVIDER_DIR/"; then
     echo "✓ terraform-docs is up to date for $PROVIDER_DIR"
