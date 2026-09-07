@@ -114,8 +114,14 @@ resource "github_repository_ruleset" "this" {
     update                  = var.restrict_updates
 
     pull_request {
-      dismiss_stale_reviews_on_push     = true
-      require_code_owner_review         = true
+      dismiss_stale_reviews_on_push = true
+      # Tracks the count rather than being set independently. The code-owner
+      # requirement is a sub-condition of requiring approvals: at a count of 0
+      # there is no approval for an owner to qualify, so a hardcoded `true`
+      # advertised a protection that could never fire. Deriving it means the
+      # ruleset always states what it actually does, and the gate returns by
+      # itself if the count is ever raised.
+      require_code_owner_review         = var.required_approving_review_count > 0
       required_review_thread_resolution = false
       required_approving_review_count   = var.required_approving_review_count
     }
