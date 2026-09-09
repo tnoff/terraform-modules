@@ -1,0 +1,20 @@
+# Backstage catalog descriptor. Discovered automatically -- the portal's GitHub
+# provider reads catalog-info.yaml from the default branch of every repo the
+# tnoff-backstage App can see, so adding this file is the whole of onboarding.
+#
+# No annotations. github.com/project-slug is DERIVED by the portal's
+# AnnotateScmSlugEntityProcessor from the location this file was fetched from,
+# and the techdocs / kubernetes / grafana annotations each assert a target
+# exists. None of those targets do yet; they arrive with the plugins that read
+# them.
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: terraform-modules
+  description: >-
+    Reusable Terraform modules, consumed by terraform and terraform-admin through
+    git:: source refs pinned to a commit. Imported, never applied on its own.
+spec:
+  type: library
+  owner: group:default/admin
+  lifecycle: production
