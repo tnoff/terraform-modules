@@ -41,7 +41,7 @@ jobs:
         uses: hashicorp/setup-terraform@dfe3c3f87815947d99a8997f908cb6525fc44e9e  # v4.0.1
         with:
           # Matches the hashicorp/terraform:1.15 image the GitLab job used.
-          terraform_version: '1.15.*'
+          terraform_version: '1.16.*'
           # Without this the action wraps terraform in a script that swallows
           # the exit code, so a failing fmt/validate would report success.
           terraform_wrapper: false
