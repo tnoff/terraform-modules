@@ -20,7 +20,7 @@ permissions:
 jobs:
   secrets:
     name: Scan for secrets
-    uses: tnoff/github-workflows/.github/workflows/trufflehog.yml@0d92c3c09cf7dd78ce36cb5f40618e7fc296e6a2
+    uses: tnoff/github-workflows/.github/workflows/trufflehog.yml@a56f0254df895235b90c5246e8eec462713112fd
 
   # fmt + validate. Deliberately a SEPARATE JOB from docs below, and that
   # separation is load-bearing rather than tidiness: `terraform init` writes a
@@ -133,7 +133,7 @@ jobs:
   # left `Release` dead in nine repos for five days in September 2026.
   contracts:
     name: Workflow contracts
-    uses: tnoff/github-workflows/.github/workflows/check-workflow-contracts.yml@0d92c3c09cf7dd78ce36cb5f40618e7fc296e6a2
+    uses: tnoff/github-workflows/.github/workflows/check-workflow-contracts.yml@a56f0254df895235b90c5246e8eec462713112fd
 
   result:
     name: CI result
