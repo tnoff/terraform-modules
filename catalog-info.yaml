@@ -2,11 +2,11 @@
 # provider reads catalog-info.yaml from the default branch of every repo the
 # tnoff-backstage App can see, so adding this file is the whole of onboarding.
 #
-# No annotations. github.com/project-slug is DERIVED by the portal's
-# AnnotateScmSlugEntityProcessor from the location this file was fetched from,
-# and the techdocs / kubernetes / grafana annotations each assert a target
-# exists. None of those targets do yet; they arrive with the plugins that read
-# them.
+# github.com/project-slug is DERIVED by the portal's
+# AnnotateScmSlugEntityProcessor from the location this file was fetched from.
+# techdocs-ref is set below now that mkdocs.yml + docs/ exist; the
+# kubernetes / grafana annotations still assert targets that don't exist yet,
+# so they stay out until those plugins are wired up.
 apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
@@ -14,6 +14,8 @@ metadata:
   description: >-
     Reusable Terraform modules, consumed by terraform and terraform-admin through
     git:: source refs pinned to a commit. Imported, never applied on its own.
+  annotations:
+    backstage.io/techdocs-ref: dir:.
 spec:
   type: library
   owner: group:default/admin

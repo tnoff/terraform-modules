@@ -1,7 +1,7 @@
 # Development
 
 Setup, conventions, and workflows for developing the modules in this
-repository. User-facing module documentation is in [README.md](README.md);
+repository. User-facing module documentation is in [README.md](../README.md);
 non-obvious internals are in [AGENTS.md](AGENTS.md).
 
 ## Prerequisites
@@ -22,7 +22,7 @@ This installs the git hook that runs `terraform fmt` and per-provider
 
 ## Pre-commit hooks
 
-Configured in [.pre-commit-config.yaml](.pre-commit-config.yaml). Each
+Configured in [.pre-commit-config.yaml](../.pre-commit-config.yaml). Each
 hook uses `pass_filenames: false` and operates on a whole provider
 directory:
 
@@ -182,7 +182,7 @@ is a manual, deliberate act.
 3. Run `pre-commit run --all-files`. The provider-level `terraform.md`
    regenerates and picks up your new module automatically.
 
-4. Add an example to the relevant section in [README.md](README.md).
+4. Add an example to the relevant section in [README.md](../README.md).
 
 ## Adding a new provider
 
@@ -200,15 +200,16 @@ is a manual, deliberate act.
    ```
 
 3. Add a leg to the `docs` matrix in
-   [.github/workflows/ci.yml](.github/workflows/ci.yml), which lists the
+   [.github/workflows/ci.yml](../.github/workflows/ci.yml), which lists the
    provider directories literally. `ci/renovate-terraform-docs.sh` works
    its own list out from the tree and needs no change.
-4. Add a `Provider Configuration` block to [README.md](README.md) with
+4. Add a `Provider Configuration` block to [README.md](../README.md) with
    the provider requirements and an example.
 
 ## Branch and remote layout
 
-The authoritative remote is GitLab
-(`gitlab.com/tnoff-projects/terraform-modules`); GitHub is a mirror.
+The authoritative remote is GitHub (`github.com/tnoff/terraform-modules`);
+see [CONTRIBUTING.md](CONTRIBUTING.md). The GitLab project at
+`tnoff-projects/terraform-modules` is frozen and kept for history only.
 Module `source = "git::..."` references in consuming repos should use
-the GitLab URL.
+the GitHub URL.
