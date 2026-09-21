@@ -23,14 +23,18 @@ Modules are consumed via Git references with specific commit SHAs to ensure repr
 
 ```hcl
 module "example" {
-  source = "git::https://gitlab.com/tnoff-projects/terraform-modules.git//oci/iam-user?ref=<commit-sha>"
+  source = "git::https://github.com/tnoff/terraform-modules.git//oci/iam-user?ref=<commit-sha>"
 
   # Module variables...
   tenancy_ocid       = var.oci_tenancy_ocid
   user_display_name  = "my-user"
   group_display_name = "my-group"
-  compartments       = ["compartment-name"]
-  verbs              = ["manage object-family"]
+
+  compartment_policies = [{
+    compartments = ["compartment-name"]
+    verbs        = ["manage object-family"]
+    where_clause = ""
+  }]
 }
 ```
 
@@ -63,8 +67,10 @@ module "example" {
 - **object-storage-bucket** - Object storage buckets with lifecycle policies and versioning
 - **object-storage-lifecycle-policies** - Lifecycle policies for object storage
 - **oke-cluster** - Oracle Kubernetes Engine cluster
-- **oke-networking** - VCN and subnet configuration for OKE
 - **oke-node-pool** - OKE node pool management
+- **oke-vcn** - VCN, gateways, and route tables for OKE
+- **oke-security-lists** - Per-role security lists for OKE (api, node, pods, lb, bastion)
+- **oke-subnet** - A single subnet, instantiated once per OKE role
 - **secret-vault** - Vault and KMS key management
 
 ### Kubernetes
@@ -86,7 +92,7 @@ This repository follows consistent variable naming conventions across all module
 ### Example
 ```hcl
 module "bucket" {
-  source           = "git::https://gitlab.com/tnoff-projects/terraform-modules.git//oci/object-storage-bucket?ref=<sha>"
+  source           = "git::https://github.com/tnoff/terraform-modules.git//oci/object-storage-bucket?ref=<sha>"
   compartment_ocid = var.compartment_ocid  # Not compartment_id
   display_name     = "my-bucket"           # Not name
   kms_key_ocid     = var.kms_key_ocid     # Not kms_key_id
@@ -104,6 +110,11 @@ Each module includes auto-generated documentation in a `terraform.md` file locat
 - Provider requirements
 
 Example: View OCI IAM user module documentation at `oci/iam-user/terraform.md`
+
+`oci/oke-networking/README.md` is the exception: it has no `terraform.md`
+because it isn't a module (no `.tf` files) — it's a composition recipe
+showing how to wire `oke-vcn`, `oke-security-lists`, and `oke-subnet`
+together.
 
 ## Provider Configuration
 
@@ -133,12 +144,12 @@ provider "cloudflare" {
 **Example Usage:**
 ```hcl
 module "dns_record" {
-  source = "git::https://gitlab.com/tnoff-projects/terraform-modules.git//cloudflare/dns?ref=<sha>"
+  source = "git::https://github.com/tnoff/terraform-modules.git//cloudflare/dns?ref=<sha>"
 
-  zone_id = var.cloudflare_zone_id
-  name    = "example.com"
-  type    = "A"
-  value   = "192.0.2.1"
+  cloudflare_account_id = var.cloudflare_account_id
+  zone_name             = "example.com"
+  ip_list               = ["192.0.2.1"]
+  ttl                   = 60
 }
 ```
 
@@ -168,7 +179,7 @@ provider "github" {
 **Example Usage:**
 ```hcl
 module "my_repo" {
-  source           = "git::https://gitlab.com/tnoff-projects/terraform-modules.git//github/repo?ref=<sha>"
+  source           = "git::https://github.com/tnoff/terraform-modules.git//github/repo?ref=<sha>"
   repo_name        = "my-project"
   repo_description = "My awesome project"
   is_public        = true
@@ -215,7 +226,7 @@ data "gitlab_group" "personal" {
 }
 
 module "my_project" {
-  source       = "git::https://gitlab.com/tnoff-projects/terraform-modules.git//gitlab/repo?ref=<sha>"
+  source       = "git::https://github.com/tnoff/terraform-modules.git//gitlab/repo?ref=<sha>"
   name         = "my-project"
   namespace_id = data.gitlab_group.personal.id
   description  = "My project"
@@ -255,7 +266,7 @@ provider "discord" {
 **Example Usage:**
 ```hcl
 module "admin_role" {
-  source          = "git::https://gitlab.com/tnoff-projects/terraform-modules.git//discord/role?ref=<sha>"
+  source          = "git::https://github.com/tnoff/terraform-modules.git//discord/role?ref=<sha>"
   server_id       = var.discord_server_id
   role_name       = "Admin"
   permission_bits = data.discord_permission.admin.allow_bits
@@ -265,7 +276,7 @@ module "admin_role" {
 }
 
 module "general_channel" {
-  source        = "git::https://gitlab.com/tnoff-projects/terraform-modules.git//discord/text-channel?ref=<sha>"
+  source        = "git::https://github.com/tnoff/terraform-modules.git//discord/text-channel?ref=<sha>"
   server_id     = var.discord_server_id
   category_id   = module.main_category.channel_group.id
   channel_name  = "general"
@@ -303,7 +314,7 @@ provider "oci" {
 ```hcl
 # Create a compartment
 module "app_compartment" {
-  source       = "git::https://gitlab.com/tnoff-projects/terraform-modules.git//oci/iam-compartment?ref=<sha>"
+  source       = "git::https://github.com/tnoff/terraform-modules.git//oci/iam-compartment?ref=<sha>"
   tenancy_ocid = var.oci_tenancy_ocid
   display_name = "applications"
   freeform_tags = {
@@ -313,7 +324,7 @@ module "app_compartment" {
 
 # Create an object storage bucket
 module "backup_bucket" {
-  source                  = "git::https://gitlab.com/tnoff-projects/terraform-modules.git//oci/object-storage-bucket?ref=<sha>"
+  source                  = "git::https://github.com/tnoff/terraform-modules.git//oci/object-storage-bucket?ref=<sha>"
   compartment_ocid        = module.app_compartment.compartment.id
   display_name            = "backups"
   namespace               = var.oci_namespace
@@ -326,20 +337,60 @@ module "backup_bucket" {
   }
 }
 
-# Create OKE cluster
-module "oke_network" {
-  source           = "git::https://gitlab.com/tnoff-projects/terraform-modules.git//oci/oke-networking?ref=<sha>"
+# OKE networking has no wrapper module -- oke-vcn, oke-security-lists, and
+# oke-subnet are composed directly. See oci/oke-networking/README.md for the
+# full recipe (all subnets, security lists, and route-table wiring).
+module "oke_vcn" {
+  source           = "git::https://github.com/tnoff/terraform-modules.git//oci/oke-vcn?ref=<sha>"
   compartment_ocid = module.app_compartment.compartment.id
-  display_name     = "oke-network"
+  display_name     = "oke"
+  vcn_cidr_block   = "10.0.0.0/16"
+}
+
+module "oke_security_lists" {
+  source               = "git::https://github.com/tnoff/terraform-modules.git//oci/oke-security-lists?ref=<sha>"
+  compartment_ocid     = module.app_compartment.compartment.id
+  vcn_ocid             = module.oke_vcn.vcn.id
+  display_name         = "oke"
+  service_gateway_cidr = module.oke_vcn.service_gateway_cidr
+
+  api_cidrs     = ["10.0.0.0/28"]
+  node_cidrs    = ["10.0.11.0/24"]
+  pod_cidrs     = ["10.0.64.0/18"]
+  lb_cidrs      = ["10.0.20.0/24"]
+  bastion_cidrs = ["10.0.30.0/24"]
+}
+
+module "oke_subnet_api" {
+  source            = "git::https://github.com/tnoff/terraform-modules.git//oci/oke-subnet?ref=<sha>"
+  compartment_ocid  = module.app_compartment.compartment.id
+  vcn_ocid          = module.oke_vcn.vcn.id
+  display_name      = "oke-k8s-api-subnet"
+  dns_label         = "k8s"
+  cidr_block        = "10.0.0.0/28"
+  security_list_ids = [module.oke_security_lists.security_list_ids.api]
+}
+
+module "oke_subnet_lb" {
+  source                     = "git::https://github.com/tnoff/terraform-modules.git//oci/oke-subnet?ref=<sha>"
+  compartment_ocid           = module.app_compartment.compartment.id
+  vcn_ocid                   = module.oke_vcn.vcn.id
+  display_name               = "oke-lb"
+  dns_label                  = "lb"
+  cidr_block                 = "10.0.20.0/24"
+  security_list_ids          = [module.oke_security_lists.security_list_ids.lb]
+  route_table_ocid           = module.oke_vcn.route_table_public_id
+  prohibit_internet_ingress  = false
+  prohibit_public_ip_on_vnic = false
 }
 
 module "oke_cluster" {
-  source             = "git::https://gitlab.com/tnoff-projects/terraform-modules.git//oci/oke-cluster?ref=<sha>"
+  source             = "git::https://github.com/tnoff/terraform-modules.git//oci/oke-cluster?ref=<sha>"
   compartment_ocid   = module.app_compartment.compartment.id
   display_name       = "production"
-  vcn_ocid           = module.oke_network.vcn.id
-  api_subnet_ocid    = module.oke_network.subnet_k8s.id
-  lb_subnet_ocids    = [module.oke_network.subnet_lb.id]
+  vcn_ocid           = module.oke_vcn.vcn.id
+  api_subnet_ocid    = module.oke_subnet_api.subnet.id
+  lb_subnet_ocids    = [module.oke_subnet_lb.subnet.id]
   kms_key_ocid       = var.kms_key_ocid
   kubernetes_version = "1.34.1"
 }
@@ -352,21 +403,20 @@ Kubernetes-specific modules for integration with OCI services.
 **Example Usage:**
 ```hcl
 module "ocir_secret" {
-  source = "git::https://gitlab.com/tnoff-projects/terraform-modules.git//kubernetes/ocir-image-pull?ref=<sha>"
+  source = "git::https://github.com/tnoff/terraform-modules.git//kubernetes/ocir-image-pull?ref=<sha>"
 
-  namespace = "default"
-  secret_name = "ocir-credentials"
-  registry_server = "iad.ocir.io"
-  username = var.ocir_username
-  password = var.ocir_token
+  namespaces               = ["default"]
+  object_storage_namespace = var.oci_namespace
+  docker_read_user_name    = var.ocir_username
+  docker_read_user_token   = var.ocir_token
 }
 ```
 
 ## Development
 
-See [DEVELOPMENT.md](DEVELOPMENT.md) for prerequisites, pre-commit setup,
+See [DEVELOPMENT.md](docs/DEVELOPMENT.md) for prerequisites, pre-commit setup,
 how to format and regenerate `terraform.md` files, and how to add a
-module or a new provider. See [AGENTS.md](AGENTS.md) for module
+module or a new provider. See [AGENTS.md](docs/AGENTS.md) for module
 conventions and design patterns.
 
 Quick start:

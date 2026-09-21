@@ -17,14 +17,14 @@ and subnets need the SL OCIDs at create time, so **vcn → security-lists → su
 
 ```hcl
 module "oke_vcn" {
-  source           = "git::https://gitlab.com/tnoff-projects/terraform-modules.git//oci/oke-vcn?ref=<sha>"
+  source           = "git::https://github.com/tnoff/terraform-modules.git//oci/oke-vcn?ref=<sha>"
   compartment_ocid = var.compartment_ocid
   display_name     = "oke"
   vcn_cidr_block   = "10.0.0.0/16"
 }
 
 module "oke_security_lists" {
-  source               = "git::https://gitlab.com/tnoff-projects/terraform-modules.git//oci/oke-security-lists?ref=<sha>"
+  source               = "git::https://github.com/tnoff/terraform-modules.git//oci/oke-security-lists?ref=<sha>"
   compartment_ocid     = var.compartment_ocid
   vcn_ocid             = module.oke_vcn.vcn.id
   display_name         = "oke"
@@ -40,7 +40,7 @@ module "oke_security_lists" {
 # Kubernetes API / control-plane subnet — no route-table attachment, so it inherits
 # the VCN default route table (omit route_table_ocid / leave it null).
 module "oke_subnet_api" {
-  source            = "git::https://gitlab.com/tnoff-projects/terraform-modules.git//oci/oke-subnet?ref=<sha>"
+  source            = "git::https://github.com/tnoff/terraform-modules.git//oci/oke-subnet?ref=<sha>"
   compartment_ocid  = var.compartment_ocid
   vcn_ocid          = module.oke_vcn.vcn.id
   display_name      = "oke-k8s-api-subnet"
@@ -51,7 +51,7 @@ module "oke_subnet_api" {
 
 # Worker-node VNIC subnet — private route table.
 module "oke_subnet_node" {
-  source            = "git::https://gitlab.com/tnoff-projects/terraform-modules.git//oci/oke-subnet?ref=<sha>"
+  source            = "git::https://github.com/tnoff/terraform-modules.git//oci/oke-subnet?ref=<sha>"
   compartment_ocid  = var.compartment_ocid
   vcn_ocid          = module.oke_vcn.vcn.id
   display_name      = "oke-node"
@@ -63,7 +63,7 @@ module "oke_subnet_node" {
 
 # VCN-native pod subnet — private route table.
 module "oke_subnet_pods" {
-  source            = "git::https://gitlab.com/tnoff-projects/terraform-modules.git//oci/oke-subnet?ref=<sha>"
+  source            = "git::https://github.com/tnoff/terraform-modules.git//oci/oke-subnet?ref=<sha>"
   compartment_ocid  = var.compartment_ocid
   vcn_ocid          = module.oke_vcn.vcn.id
   display_name      = "oke-pods"
@@ -75,7 +75,7 @@ module "oke_subnet_pods" {
 
 # Load-balancer subnet — public route table, public IPs allowed.
 module "oke_subnet_lb" {
-  source                     = "git::https://gitlab.com/tnoff-projects/terraform-modules.git//oci/oke-subnet?ref=<sha>"
+  source                     = "git::https://github.com/tnoff/terraform-modules.git//oci/oke-subnet?ref=<sha>"
   compartment_ocid           = var.compartment_ocid
   vcn_ocid                   = module.oke_vcn.vcn.id
   display_name               = "oke-lb"
@@ -89,7 +89,7 @@ module "oke_subnet_lb" {
 
 # Bastion subnet — private route table.
 module "oke_subnet_bastion" {
-  source            = "git::https://gitlab.com/tnoff-projects/terraform-modules.git//oci/oke-subnet?ref=<sha>"
+  source            = "git::https://github.com/tnoff/terraform-modules.git//oci/oke-subnet?ref=<sha>"
   compartment_ocid  = var.compartment_ocid
   vcn_ocid          = module.oke_vcn.vcn.id
   display_name      = "oke-bastion"
