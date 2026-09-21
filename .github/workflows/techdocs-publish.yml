@@ -27,7 +27,7 @@ concurrency:
 jobs:
   publish:
     name: Generate and publish
-    uses: tnoff/github-workflows/.github/workflows/techdocs-publish.yml@55bd41db5b046d48ab79fcc8bcacf0b97a5fd9ad
+    uses: tnoff/github-workflows/.github/workflows/techdocs-publish.yml@387bcb8774f6d5c75d7e9ea35003ed1f35ebf7a4
     with:
       entity_ref: default/Component/terraform-modules
     secrets:
