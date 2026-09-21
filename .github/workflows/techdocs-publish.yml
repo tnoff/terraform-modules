@@ -1,16 +1,11 @@
 name: Publish TechDocs
 
-# Builds the mkdocs site under docs/ and pushes it straight to the
-# backstage_techdocs bucket, using @techdocs/cli -- the "recommended
-# deployment approach" from
-# https://backstage.io/docs/features/techdocs/how-to-guides#how-to-migrate-from-techdocs-basic-to-recommended-deployment-approach.
-#
-# The backstage backend runs with techdocs.builder: external (docker-apps
-# apps/backstage/config.yaml) precisely because it has no Docker available to
-# generate on demand -- see that repo and backstage#20. This workflow is the
-# other half: it runs on a GitHub-hosted runner, which DOES have Docker, so
-# `techdocs-cli generate`'s default (docker-based mkdocs build) works here
-# with nothing extra installed.
+# Was an inline generate+publish job; migrated to call the reusable workflow
+# once a second repo needed the same steps. See tnoff/github-workflows#77
+# for the extraction and why it exists at all (short version: the backstage
+# backend runs with techdocs.builder: external because it has no Docker, so
+# something else has to build and publish -- see docker-apps +
+# tnoff/backstage#20).
 #
 # TECHDOCS_S3_* secrets come from oci/oci.tf's backstage_techdocs_ci_creds --
 # a bucket-only identity, separate from the one the backstage pod itself
@@ -29,38 +24,15 @@ concurrency:
   group: techdocs-publish
   cancel-in-progress: false
 
-permissions:
-  contents: read
-
 jobs:
   publish:
     name: Generate and publish
-    runs-on: ubuntu-24.04
-    permissions:
-      contents: read
-    steps:
-      - name: Checkout
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
-
-      # --legacyCopyReadmeMdToIndexMd: docs/ has README.md, DEVELOPMENT.md,
-      # AGENTS.md, CONTRIBUTING.md and mkdocs.yml's nav points at those exact
-      # names -- there is no docs/index.md. Without this flag the TechDocs
-      # backend serves a bare "Page not found... no index.md" 404 at the
-      # component's docs root even though the build itself succeeds.
-      - name: Generate docs
-        run: >-
-          npx --yes @techdocs/cli@1.12.0 generate
-          --legacyCopyReadmeMdToIndexMd
-
-      - name: Publish docs
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.TECHDOCS_S3_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.TECHDOCS_S3_SECRET_ACCESS_KEY }}
-          AWS_REGION: ${{ secrets.TECHDOCS_S3_REGION }}
-        run: >-
-          npx --yes @techdocs/cli@1.12.0 publish
-          --publisher-type awsS3
-          --storage-name "${{ secrets.TECHDOCS_S3_BUCKET_NAME }}"
-          --awsEndpoint "${{ secrets.TECHDOCS_S3_ENDPOINT }}"
-          --awsS3ForcePathStyle
-          --entity default/Component/terraform-modules
+    uses: tnoff/github-workflows/.github/workflows/techdocs-publish.yml@55bd41db5b046d48ab79fcc8bcacf0b97a5fd9ad
+    with:
+      entity_ref: default/Component/terraform-modules
+    secrets:
+      techdocs_s3_access_key_id: ${{ secrets.TECHDOCS_S3_ACCESS_KEY_ID }}
+      techdocs_s3_secret_access_key: ${{ secrets.TECHDOCS_S3_SECRET_ACCESS_KEY }}
+      techdocs_s3_bucket_name: ${{ secrets.TECHDOCS_S3_BUCKET_NAME }}
+      techdocs_s3_endpoint: ${{ secrets.TECHDOCS_S3_ENDPOINT }}
+      techdocs_s3_region: ${{ secrets.TECHDOCS_S3_REGION }}
