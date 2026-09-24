@@ -30,7 +30,7 @@ jobs:
   # exactly like real drift. Observed locally while preparing this port.
   validate:
     name: Terraform fmt and validate
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     permissions:
       contents: read
     steps:
@@ -88,7 +88,7 @@ jobs:
   # today; verified before adding it.
   docs:
     name: terraform-docs (${{ matrix.provider }})
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     permissions:
       contents: read
     strategy:
@@ -116,7 +116,7 @@ jobs:
   # to run once.
   pins:
     name: terraform-docs pins agree
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     permissions:
       contents: read
     steps:
@@ -151,7 +151,7 @@ jobs:
     # require it and the matrix stays free to change.
     if: always()
     needs: [secrets, validate, docs, pins, contracts]
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     permissions:
       contents: read
     steps:
