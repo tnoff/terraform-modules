@@ -92,6 +92,12 @@ variable "has_issues" {
   description = "Enable the issues feature. Defaults to false for mirrors where issues are tracked upstream."
 }
 
+variable "archived" {
+  type        = bool
+  default     = false
+  description = "Archive the repository: read-only, no new issues/PRs/pushes. GitHub's API allows flipping this back to false, but treat it as a one-way door in this module -- an archived repo rejects most other write calls, so every other field this module manages should already match live state (no other diff) before turning this on, or the same apply can fail partway through an unrelated resource."
+}
+
 variable "has_wiki" {
   type        = bool
   default     = false
