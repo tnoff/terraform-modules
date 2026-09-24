@@ -10,6 +10,7 @@ resource "github_repository" "this" {
   has_downloads          = var.has_downloads
   has_issues             = var.has_issues
   has_wiki               = var.has_wiki
+  archived               = var.archived
 
   # Seeds the repo with an initial README on creation so `github_branch.default`
   # below has a `refs/heads/main` to point at and the paired `gitlab_project`'s
