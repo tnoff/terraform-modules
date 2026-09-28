@@ -24,6 +24,13 @@ concurrency:
   group: techdocs-publish
   cancel-in-progress: false
 
+# Without this, permissions default to whatever the repo/org falls back to
+# (potentially write-all) instead of being pinned explicitly, same reasoning
+# as ci.yml's top-level block. This workflow only reads the repo and forwards
+# S3 secrets to the reusable callee -- it never needs to write to the repo.
+permissions:
+  contents: read
+
 jobs:
   publish:
     name: Generate and publish
