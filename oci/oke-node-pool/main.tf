@@ -88,11 +88,8 @@ resource "oci_containerengine_node_pool" "this" {
   node_metadata = local.node_metadata
 
   node_config_details {
-    kms_key_id = var.kms_key_ocid
-    # Free, no measured performance impact, Updatable (no node replacement).
-    # Requires a VM shape launched from an Oracle platform image -- true for
-    # every consumer of this module today.
-    is_pv_encryption_in_transit_enabled = true
+    kms_key_id                          = var.kms_key_ocid
+    is_pv_encryption_in_transit_enabled = var.enable_in_transit_encryption
     placement_configs {
       availability_domain = var.availability_domain
       subnet_id           = var.worker_pool_subnet_ocid
@@ -141,11 +138,8 @@ resource "oci_containerengine_node_pool" "this_autoscaled" {
   node_metadata = local.node_metadata
 
   node_config_details {
-    kms_key_id = var.kms_key_ocid
-    # Free, no measured performance impact, Updatable (no node replacement).
-    # Requires a VM shape launched from an Oracle platform image -- true for
-    # every consumer of this module today.
-    is_pv_encryption_in_transit_enabled = true
+    kms_key_id                          = var.kms_key_ocid
+    is_pv_encryption_in_transit_enabled = var.enable_in_transit_encryption
     placement_configs {
       availability_domain = var.availability_domain
       subnet_id           = var.worker_pool_subnet_ocid
