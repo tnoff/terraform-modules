@@ -126,6 +126,102 @@ jobs:
       - name: Check terraform-docs pins
         run: ./ci/check-terraform-docs-pins.sh
 
+  # Checkov's Terraform-resource security rules, run over the whole repo (not
+  # a diff), through docker for the same reason `docs` above uses it: an exact,
+  # reproducible version pin instead of a marketplace action's floating tag.
+  #
+  # Deliberately advisory only -- NOT in `result`'s `needs` below, same as
+  # terraform-admin's checkov landing. A full-repo scan surfaces pre-existing
+  # findings unrelated to whatever a given PR touches, so gating merge on it
+  # now would block unrelated PRs on pre-existing debt rather than on
+  # anything the PR introduced.
+  #
+  # Every finding from the original proof-of-concept scan is now either fixed
+  # or --skip-check'd with a documented reason (see below): node pool boot-
+  # volume in-transit encryption (#73) and node SSH scoped to the bastion
+  # (#74) are both fixed; everything else is a skip. Promote this job into
+  # `result`'s `needs` whenever that's wanted -- nothing is unaccounted for.
+  checkov:
+    name: Checkov (Terraform security scan)
+    runs-on: ubuntu-26.04
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+
+      # Skips below are each a documented reason, not disagreement with the
+      # underlying goal:
+      #
+      #   CKV_GIT_1 (repo should be private) -- github/repo's is_public
+      #     defaults true; this fleet is intentionally a set of public
+      #     personal projects.
+      #
+      #   CKV_GIT_4 (Actions secrets should be encrypted) -- real gap
+      #     (Terraform state stores the plaintext value, not just the CLI
+      #     display), but several action_secrets values (e.g. OCI_TOKEN) are
+      #     themselves computed mid-apply from another stack's outputs, not
+      #     static values that could be encrypted before Terraform ever sees
+      #     them. No verified mechanism closes that: an in-graph encryption
+      #     step (e.g. the external provider) records the same plaintext as
+      #     its own data source's query in state, which relocates the
+      #     exposure rather than removing it. Revisit if github_actions_secret
+      #     ever grows a write-only/ephemeral value argument.
+      #
+      #   CKV_GLB_1 (2 approving MR reviews), CKV_GLB_3 (prevent-secrets push
+      #   rule), CKV_GLB_4 (signed-commits push rule) -- all three are GitLab
+      #   Premium features. tnoff-projects is confirmed on the Free tier
+      #   (`glab api namespaces/tnoff-projects` -> plan: free), so none of
+      #   these are configurable regardless of preference.
+      #
+      #   CKV_OCI_7 (bucket can emit object events), CKV_OCI_8 (bucket
+      #   versioning enabled) -- neither is a security control. Object events
+      #   is an integration feature (Events service notifications);
+      #   versioning is a per-bucket storage-cost/data-protection tradeoff
+      #   the module already exposes as opt-in (versioning_enabled), not
+      #   something to force fleet-wide.
+      #
+      #   CKV2_OCI_6 (pod security policy admission controller enabled) --
+      #   PodSecurityPolicy was removed from Kubernetes core in 1.25; every
+      #   cluster this module manages runs 1.35.2. The toggle still exists in
+      #   OCI's API, but enabling it can't restore a Kubernetes API object
+      #   that no longer exists.
+      #
+      #   CKV_OCI_17 (VCN inbound security lists should be stateless) --
+      #   intentional. Every rule in oke-security-lists sets stateless =
+      #   false on purpose: peer-role CIDR rules are symmetric by design, and
+      #   stateful rules avoid having to duplicate the reverse direction.
+      #
+      #   CKV_OCI_16 (VCN should have an inbound security list) -- by design.
+      #   The lb security list is seeded empty and OKE fully manages both its
+      #   ingress and egress dynamically (lifecycle.ignore_changes on both);
+      #   there is deliberately nothing static to check here.
+      #
+      #   CKV2_OCI_3 (Kubernetes engine cluster should have NSG(s)) -- the
+      #   cluster's API subnet is single-purpose (verified: referenced
+      #   nowhere else in the consuming stack besides the cluster's own
+      #   endpoint_config), so the Security List already managed by this
+      #   module provides the same isolation an NSG would add. Real build
+      #   effort (a new NSG resource + rule set) for no closed gap.
+      #
+      #   CKV_OCI_19 (no security list should allow ingress from 0.0.0.0/0 to
+      #   port 22) -- fixed for the node security list (#74, scoped to
+      #   bastion_cidrs). This still fires because it's misattributed to the
+      #   empty, unrelated lb security list -- confirmed by re-scanning after
+      #   #74 landed, with zero effect on this finding. The real trigger is
+      #   bastion_ingress's own 0.0.0.0/0:22 rule, which is intentionally
+      #   broad: it's OCI's managed Bastion service, not a raw listening
+      #   host, gated by its own client_cidr_block_allow_list rather than
+      #   this security list, and the bastion subnet also sets
+      #   prohibit_internet_ingress + prohibit_public_ip_on_vnic in the
+      #   consuming stack -- so this was never externally reachable, and
+      #   nothing routes to it via raw TCP the way the node rule did.
+      - name: Run checkov
+        run: |
+          docker run --rm -v "${PWD}:/src" bridgecrew/checkov:3.3.20 \
+            -d /src --compact --quiet \
+            --skip-check CKV_GIT_1,CKV_GIT_4,CKV_GLB_1,CKV_GLB_3,CKV_GLB_4,CKV_OCI_7,CKV_OCI_8,CKV2_OCI_6,CKV_OCI_17,CKV_OCI_16,CKV2_OCI_3,CKV_OCI_19
+
   # Catches a `uses:` whose inputs or secrets no longer match the pinned callee.
   # That mismatch fails the calling workflow at STARTUP -- no job is created, no
   # check reports, and no `workflow_run` event fires -- so neither this checks
