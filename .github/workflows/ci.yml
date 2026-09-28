@@ -136,16 +136,11 @@ jobs:
   # now would block unrelated PRs on pre-existing debt rather than on
   # anything the PR introduced.
   #
-  # github/repo and gitlab/repo findings are fully triaged (see the
-  # --skip-check list below), as are the object-storage-bucket and pod-
-  # security-policy findings. Node pool boot-volume in-transit encryption is
-  # fixed (#73). Still open, both in oci/oke-security-lists and
-  # oci/oke-cluster: worker-node SSH exposed to 0.0.0.0/0 (CKV_OCI_19,
-  # misattributed to the lb security list -- the real rule is on node and
-  # bastion), and the OKE cluster has no NSG (CKV2_OCI_3, though the API
-  # endpoint already has equivalent protection via the Security Lists this
-  # module manages). Promote this job into `result`'s `needs` once those are
-  # resolved (fixed, or --skip-check'd with a reason).
+  # Every finding from the original proof-of-concept scan is now either fixed
+  # or --skip-check'd with a documented reason (see below): node pool boot-
+  # volume in-transit encryption (#73) and node SSH scoped to the bastion
+  # (#74) are both fixed; everything else is a skip. Promote this job into
+  # `result`'s `needs` whenever that's wanted -- nothing is unaccounted for.
   checkov:
     name: Checkov (Terraform security scan)
     runs-on: ubuntu-26.04
@@ -191,11 +186,41 @@ jobs:
       #   cluster this module manages runs 1.35.2. The toggle still exists in
       #   OCI's API, but enabling it can't restore a Kubernetes API object
       #   that no longer exists.
+      #
+      #   CKV_OCI_17 (VCN inbound security lists should be stateless) --
+      #   intentional. Every rule in oke-security-lists sets stateless =
+      #   false on purpose: peer-role CIDR rules are symmetric by design, and
+      #   stateful rules avoid having to duplicate the reverse direction.
+      #
+      #   CKV_OCI_16 (VCN should have an inbound security list) -- by design.
+      #   The lb security list is seeded empty and OKE fully manages both its
+      #   ingress and egress dynamically (lifecycle.ignore_changes on both);
+      #   there is deliberately nothing static to check here.
+      #
+      #   CKV2_OCI_3 (Kubernetes engine cluster should have NSG(s)) -- the
+      #   cluster's API subnet is single-purpose (verified: referenced
+      #   nowhere else in the consuming stack besides the cluster's own
+      #   endpoint_config), so the Security List already managed by this
+      #   module provides the same isolation an NSG would add. Real build
+      #   effort (a new NSG resource + rule set) for no closed gap.
+      #
+      #   CKV_OCI_19 (no security list should allow ingress from 0.0.0.0/0 to
+      #   port 22) -- fixed for the node security list (#74, scoped to
+      #   bastion_cidrs). This still fires because it's misattributed to the
+      #   empty, unrelated lb security list -- confirmed by re-scanning after
+      #   #74 landed, with zero effect on this finding. The real trigger is
+      #   bastion_ingress's own 0.0.0.0/0:22 rule, which is intentionally
+      #   broad: it's OCI's managed Bastion service, not a raw listening
+      #   host, gated by its own client_cidr_block_allow_list rather than
+      #   this security list, and the bastion subnet also sets
+      #   prohibit_internet_ingress + prohibit_public_ip_on_vnic in the
+      #   consuming stack -- so this was never externally reachable, and
+      #   nothing routes to it via raw TCP the way the node rule did.
       - name: Run checkov
         run: |
           docker run --rm -v "${PWD}:/src" bridgecrew/checkov:3.3.20 \
             -d /src --compact --quiet \
-            --skip-check CKV_GIT_1,CKV_GIT_4,CKV_GLB_1,CKV_GLB_3,CKV_GLB_4,CKV_OCI_7,CKV_OCI_8,CKV2_OCI_6
+            --skip-check CKV_GIT_1,CKV_GIT_4,CKV_GLB_1,CKV_GLB_3,CKV_GLB_4,CKV_OCI_7,CKV_OCI_8,CKV2_OCI_6,CKV_OCI_17,CKV_OCI_16,CKV2_OCI_3,CKV_OCI_19
 
   # Catches a `uses:` whose inputs or secrets no longer match the pinned callee.
   # That mismatch fails the calling workflow at STARTUP -- no job is created, no
