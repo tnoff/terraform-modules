@@ -2,10 +2,11 @@
 #
 # Every security list for the VCN is created here from the per-role subnet CIDR
 # lists (api_cidrs, node_cidrs, pod_cidrs, lb_cidrs, bastion_cidrs). Because the
-# rules cross-reference *other* subnets' CIDRs (a node SL admits the api/lb/pod
-# CIDRs; the api SL admits the node/pod CIDRs), centralizing them here — where
-# every subnet is visible — removes the per-subnet peer-threading and lets a new
-# subnet of an existing role be added by appending one CIDR to a list.
+# rules cross-reference *other* subnets' CIDRs (a node SL admits the
+# api/lb/bastion/pod CIDRs; the api SL admits the node/pod CIDRs),
+# centralizing them here — where every subnet is visible — removes the
+# per-subnet peer-threading and lets a new subnet of an existing role be
+# added by appending one CIDR to a list.
 #
 # Rules are expressed as plain data and rendered by the dynamic blocks below.
 # Normalized shapes (all keys present, null where unused):
@@ -28,12 +29,19 @@ locals {
     [for c in local.api_peer_cidrs : { protocol = "all", cidr = c, dest_type = "CIDR_BLOCK", tcp_min = null, tcp_max = null, icmp_type = null, icmp_code = null }],
   )
 
+  # SSH admits bastion_cidrs only, not 0.0.0.0/0 -- this subnet already has
+  # prohibit_internet_ingress + prohibit_public_ip_on_vnic set at the subnet
+  # level (see the consuming stack), so a world-open rule here was never
+  # externally reachable. It still mattered for lateral movement: anything
+  # already inside the VCN could SSH to a node with no further restriction.
+  # Scoping to the bastion mirrors bastion_egress's existing node_cidrs:22
+  # rule below -- that's the other half of this same path.
   node_ingress = concat(
     [for c in var.node_cidrs : { protocol = "all", cidr = c, tcp_min = null, tcp_max = null, icmp_type = null, icmp_code = null }],
     [for c in var.pod_cidrs : { protocol = "all", cidr = c, tcp_min = null, tcp_max = null, icmp_type = null, icmp_code = null }],
     [for c in var.api_cidrs : { protocol = "1", cidr = c, tcp_min = null, tcp_max = null, icmp_type = 3, icmp_code = 4 }],
     [for c in var.api_cidrs : { protocol = "6", cidr = c, tcp_min = null, tcp_max = null, icmp_type = null, icmp_code = null }],
-    [{ protocol = "6", cidr = "0.0.0.0/0", tcp_min = 22, tcp_max = 22, icmp_type = null, icmp_code = null }],
+    [for c in var.bastion_cidrs : { protocol = "6", cidr = c, tcp_min = 22, tcp_max = 22, icmp_type = null, icmp_code = null }],
     [for c in var.lb_cidrs : { protocol = "6", cidr = c, tcp_min = null, tcp_max = null, icmp_type = null, icmp_code = null }],
   )
   node_egress = concat(
