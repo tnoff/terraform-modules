@@ -132,15 +132,16 @@ jobs:
   #
   # Deliberately advisory only -- NOT in `result`'s `needs` below, same as
   # terraform-admin's checkov landing. A full-repo scan surfaces pre-existing
-  # findings unrelated to whatever a given PR touches (confirmed locally:
-  # ~15 open findings across oci/oke-security-lists, oci/oke-cluster,
-  # oci/oke-node-pool, oci/object-storage-bucket, github/repo, gitlab/repo),
-  # so gating merge on it now would block unrelated PRs on pre-existing debt
-  # rather than on anything the PR introduced. Promote it into `result`'s
-  # `needs` once those are triaged (fixed, or excluded with `--skip-check` for
-  # the ones that are policy opinions rather than real misconfigurations here,
-  # e.g. the OCI security-list "stateless" check, which doesn't fit how this
-  # fleet uses OCI security lists for LB/OKE traffic).
+  # findings unrelated to whatever a given PR touches, so gating merge on it
+  # now would block unrelated PRs on pre-existing debt rather than on
+  # anything the PR introduced.
+  #
+  # github/repo and gitlab/repo findings are fully triaged (see the
+  # --skip-check list below). Still open, all in oci/oke-security-lists,
+  # oci/oke-cluster, and oci/oke-node-pool: worker-node SSH exposed to
+  # 0.0.0.0/0, the OKE cluster has no NSG, and node pool boot volumes don't
+  # enable in-transit encryption. Promote this job into `result`'s `needs`
+  # once those are resolved (fixed, or --skip-check'd with a reason).
   checkov:
     name: Checkov (Terraform security scan)
     runs-on: ubuntu-26.04
@@ -150,10 +151,34 @@ jobs:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
 
+      # Skips below are each a documented reason, not disagreement with the
+      # underlying goal:
+      #
+      #   CKV_GIT_1 (repo should be private) -- github/repo's is_public
+      #     defaults true; this fleet is intentionally a set of public
+      #     personal projects.
+      #
+      #   CKV_GIT_4 (Actions secrets should be encrypted) -- real gap
+      #     (Terraform state stores the plaintext value, not just the CLI
+      #     display), but several action_secrets values (e.g. OCI_TOKEN) are
+      #     themselves computed mid-apply from another stack's outputs, not
+      #     static values that could be encrypted before Terraform ever sees
+      #     them. No verified mechanism closes that: an in-graph encryption
+      #     step (e.g. the external provider) records the same plaintext as
+      #     its own data source's query in state, which relocates the
+      #     exposure rather than removing it. Revisit if github_actions_secret
+      #     ever grows a write-only/ephemeral value argument.
+      #
+      #   CKV_GLB_1 (2 approving MR reviews), CKV_GLB_3 (prevent-secrets push
+      #   rule), CKV_GLB_4 (signed-commits push rule) -- all three are GitLab
+      #   Premium features. tnoff-projects is confirmed on the Free tier
+      #   (`glab api namespaces/tnoff-projects` -> plan: free), so none of
+      #   these are configurable regardless of preference.
       - name: Run checkov
         run: |
           docker run --rm -v "${PWD}:/src" bridgecrew/checkov:3.3.20 \
-            -d /src --compact --quiet
+            -d /src --compact --quiet \
+            --skip-check CKV_GIT_1,CKV_GIT_4,CKV_GLB_1,CKV_GLB_3,CKV_GLB_4
 
   # Catches a `uses:` whose inputs or secrets no longer match the pinned callee.
   # That mismatch fails the calling workflow at STARTUP -- no job is created, no
