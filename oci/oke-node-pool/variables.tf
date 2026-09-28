@@ -13,6 +13,12 @@ variable "kms_key_ocid" {
   description = "OCID of KMS Key Id to use for nodes"
 }
 
+variable "enable_in_transit_encryption" {
+  type        = bool
+  default     = true
+  description = "Enable in-transit encryption for the node pool's paravirtualized boot/block volume attachment. Free, no measured performance impact, and Updatable (no node replacement). Requires a VM shape launched from an Oracle platform image -- true for every consumer of this module today. Defaults true; there's no real scenario where a caller would want it off."
+}
+
 variable "display_name" {
   type        = string
   description = "Container Engine cluster name"
