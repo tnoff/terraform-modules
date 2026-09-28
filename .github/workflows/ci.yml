@@ -130,17 +130,12 @@ jobs:
   # a diff), through docker for the same reason `docs` above uses it: an exact,
   # reproducible version pin instead of a marketplace action's floating tag.
   #
-  # Deliberately advisory only -- NOT in `result`'s `needs` below, same as
-  # terraform-admin's checkov landing. A full-repo scan surfaces pre-existing
-  # findings unrelated to whatever a given PR touches, so gating merge on it
-  # now would block unrelated PRs on pre-existing debt rather than on
-  # anything the PR introduced.
-  #
   # Every finding from the original proof-of-concept scan is now either fixed
   # or --skip-check'd with a documented reason (see below): node pool boot-
   # volume in-transit encryption (#73) and node SSH scoped to the bastion
-  # (#74) are both fixed; everything else is a skip. Promote this job into
-  # `result`'s `needs` whenever that's wanted -- nothing is unaccounted for.
+  # (#74) are both fixed; everything else is a skip. Promoted into `result`'s
+  # `needs` below -- nothing is unaccounted for, so a full-repo scan no longer
+  # risks blocking a PR on pre-existing debt unrelated to its own diff.
   checkov:
     name: Checkov (Terraform security scan)
     runs-on: ubuntu-26.04
@@ -246,7 +241,7 @@ jobs:
     # This job always runs and its name never changes, so the ruleset can
     # require it and the matrix stays free to change.
     if: always()
-    needs: [secrets, validate, docs, pins, contracts]
+    needs: [secrets, validate, docs, pins, contracts, checkov]
     runs-on: ubuntu-26.04
     permissions:
       contents: read
@@ -258,6 +253,7 @@ jobs:
           echo "docs:      ${{ needs.docs.result }}"
           echo "pins:      ${{ needs.pins.result }}"
           echo "contracts: ${{ needs.contracts.result }}"
+          echo "checkov:   ${{ needs.checkov.result }}"
 
       - name: Fail if any job failed
         if: >-
@@ -265,7 +261,8 @@ jobs:
           needs.validate.result == 'failure' || needs.validate.result == 'cancelled' ||
           needs.docs.result == 'failure' || needs.docs.result == 'cancelled' ||
           needs.pins.result == 'failure' || needs.pins.result == 'cancelled' ||
-          needs.contracts.result == 'failure' || needs.contracts.result == 'cancelled'
+          needs.contracts.result == 'failure' || needs.contracts.result == 'cancelled' ||
+          needs.checkov.result == 'failure' || needs.checkov.result == 'cancelled'
         run: |
           echo "::error::One or more CI jobs did not pass."
           exit 1
