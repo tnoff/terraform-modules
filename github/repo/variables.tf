@@ -83,7 +83,7 @@ variable "enable_ruleset" {
 variable "enable_vulnerability_alerts" {
   type        = bool
   default     = false
-  description = "Whether to enable Dependabot vulnerability alerts. Defaults to false for mirrors where scanning happens upstream."
+  description = "Whether to enable Dependabot vulnerability alerts. Defaults to false for mirrors where scanning happens upstream. Ignored (treated as false) when archived is true, since the provider cannot manage this on a read-only repo."
 }
 
 variable "has_issues" {
