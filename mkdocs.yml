@@ -6,6 +6,8 @@ nav:
   - Development: DEVELOPMENT.md
   - Agents/Conventions: AGENTS.md
   - Contributing: CONTRIBUTING.md
+  - OKE networking recipe: oke-networking.md
+  - OKE node init customizations: node-init-customizations.md
 
 plugins:
   - techdocs-core

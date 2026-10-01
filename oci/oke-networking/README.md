@@ -6,9 +6,9 @@ that all state moves (`moved` blocks) live with the state, not in this repo.
 
 | Module | Creates |
 |---|---|
-| [`oci/oke-vcn`](../oke-vcn) | VCN + service/NAT/internet gateways + public & private route tables |
-| [`oci/oke-security-lists`](../oke-security-lists) | Every security list, from per-role subnet CIDR **lists** (`api_cidrs`, `node_cidrs`, `pod_cidrs`, `lb_cidrs`, `bastion_cidrs`) |
-| [`oci/oke-subnet`](../oke-subnet) | One subnet (+ optional route-table attachment). Instantiate once per subnet, passing the SL id(s) from `oke-security-lists` |
+| [`oci/oke-vcn`](https://github.com/tnoff/terraform-modules/tree/main/oci/oke-vcn) | VCN + service/NAT/internet gateways + public & private route tables |
+| [`oci/oke-security-lists`](https://github.com/tnoff/terraform-modules/tree/main/oci/oke-security-lists) | Every security list, from per-role subnet CIDR **lists** (`api_cidrs`, `node_cidrs`, `pod_cidrs`, `lb_cidrs`, `bastion_cidrs`) |
+| [`oci/oke-subnet`](https://github.com/tnoff/terraform-modules/tree/main/oci/oke-subnet) | One subnet (+ optional route-table attachment). Instantiate once per subnet, passing the SL id(s) from `oke-security-lists` |
 
 Wire order is data-clean: the security lists need only CIDRs (not subnet OCIDs),
 and subnets need the SL OCIDs at create time, so **vcn → security-lists → subnets**.
