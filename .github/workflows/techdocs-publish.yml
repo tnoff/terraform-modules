@@ -16,6 +16,9 @@ on:
     branches: [main]
     paths:
       - 'docs/**'
+      - '*.md'
+      - 'oci/docs/**'
+      - 'oci/oke-networking/README.md'
       - 'mkdocs.yml'
       - 'catalog-info.yaml'
       - '.github/workflows/techdocs-publish.yml'
