@@ -22,8 +22,14 @@ resource "github_repository" "this" {
   auto_init = var.auto_init
 }
 
+# Not managed on an archived repo: the provider errors on this resource once the
+# repo is read-only ("repository is archived, please remove the resource from
+# your configuration"), which breaks every later plan. Flipping archived = true
+# in the same change as dropping alerts is fine -- terraform destroys this
+# resource before updating the repo it depends on. A repo that was archived
+# with this resource already in state needs a one-off `state rm` first.
 resource "github_repository_vulnerability_alerts" "this" {
-  count      = var.enable_vulnerability_alerts ? 1 : 0
+  count      = var.enable_vulnerability_alerts && !var.archived ? 1 : 0
   repository = github_repository.this.name
 }
 
