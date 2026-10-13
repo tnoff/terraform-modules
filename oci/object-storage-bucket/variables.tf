@@ -15,7 +15,19 @@ variable "display_name" {
 
 variable "kms_key_ocid" {
   type        = string
-  description = "KMS Key OCID"
+  default     = null
+  description = "KMS Key OCID. Leave null to use Oracle-managed encryption (for example for a deliberately public bucket whose content is not sensitive)."
+}
+
+variable "access_type" {
+  type        = string
+  default     = "NoPublicAccess"
+  description = "Public access type: NoPublicAccess, ObjectRead (public read and list) or ObjectReadWithoutList (public read of known object names, no listing). Anything other than NoPublicAccess makes the bucket's objects readable by anyone on the internet."
+
+  validation {
+    condition     = contains(["NoPublicAccess", "ObjectRead", "ObjectReadWithoutList"], var.access_type)
+    error_message = "access_type must be NoPublicAccess, ObjectRead or ObjectReadWithoutList."
+  }
 }
 
 variable "delete_after" {

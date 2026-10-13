@@ -29,6 +29,7 @@ No modules.
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_abort_incomplete_uploads_after"></a> [abort\_incomplete\_uploads\_after](#input\_abort\_incomplete\_uploads\_after) | Abort incomplete multipart uploads after X days, if 0 does not set | `number` | `0` | no |
+| <a name="input_access_type"></a> [access\_type](#input\_access\_type) | Public access type: NoPublicAccess, ObjectRead (public read and list) or ObjectReadWithoutList (public read of known object names, no listing). Anything other than NoPublicAccess makes the bucket's objects readable by anyone on the internet. | `string` | `"NoPublicAccess"` | no |
 | <a name="input_archive_after"></a> [archive\_after](#input\_archive\_after) | Delete objects in bucket after X days, if 0 does not set | `number` | `30` | no |
 | <a name="input_archive_previous_versions_after"></a> [archive\_previous\_versions\_after](#input\_archive\_previous\_versions\_after) | Archive previous object versions after X days, if 0 does not set (only applies when versioning is enabled) | `number` | `0` | no |
 | <a name="input_compartment_ocid"></a> [compartment\_ocid](#input\_compartment\_ocid) | Compartment OCID for bucket | `string` | n/a | yes |
@@ -37,7 +38,7 @@ No modules.
 | <a name="input_delete_previous_versions_after"></a> [delete\_previous\_versions\_after](#input\_delete\_previous\_versions\_after) | Delete previous object versions after X days, if 0 does not set (only applies when versioning is enabled) | `number` | `0` | no |
 | <a name="input_display_name"></a> [display\_name](#input\_display\_name) | Name for bucket | `string` | n/a | yes |
 | <a name="input_freeform_tags"></a> [freeform\_tags](#input\_freeform\_tags) | Extra freeform tags for bucket | `map(any)` | `{}` | no |
-| <a name="input_kms_key_ocid"></a> [kms\_key\_ocid](#input\_kms\_key\_ocid) | KMS Key OCID | `string` | n/a | yes |
+| <a name="input_kms_key_ocid"></a> [kms\_key\_ocid](#input\_kms\_key\_ocid) | KMS Key OCID. Leave null to use Oracle-managed encryption (for example for a deliberately public bucket whose content is not sensitive). | `string` | `null` | no |
 | <a name="input_namespace"></a> [namespace](#input\_namespace) | Object storage namespace for bucket | `string` | n/a | yes |
 | <a name="input_replication_destination"></a> [replication\_destination](#input\_replication\_destination) | Replication bucket settings | <pre>object({<br/>    bucket_name   = string,<br/>    bucket_region = string<br/>  })</pre> | `null` | no |
 | <a name="input_versioning_enabled"></a> [versioning\_enabled](#input\_versioning\_enabled) | Enable versioning on the bucket | `bool` | `false` | no |
