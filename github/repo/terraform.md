@@ -5,14 +5,12 @@
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | ~> 1.9 |
 | <a name="requirement_github"></a> [github](#requirement\_github) | ~> 6.0 |
-| <a name="requirement_restapi"></a> [restapi](#requirement\_restapi) | ~> 3.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
 | <a name="provider_github"></a> [github](#provider\_github) | ~> 6.0 |
-| <a name="provider_restapi"></a> [restapi](#provider\_restapi) | ~> 3.0 |
 
 ## Modules
 
@@ -22,6 +20,7 @@ No modules.
 
 | Name | Type |
 |------|------|
+| [github_actions_repository_fork_pr_contributor_approval.this](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/actions_repository_fork_pr_contributor_approval) | resource |
 | [github_actions_secret.this](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/actions_secret) | resource |
 | [github_actions_variable.this](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/actions_variable) | resource |
 | [github_branch.default](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/branch) | resource |
@@ -33,7 +32,6 @@ No modules.
 | [github_repository_ruleset.this](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository_ruleset) | resource |
 | [github_repository_topics.this](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository_topics) | resource |
 | [github_repository_vulnerability_alerts.this](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository_vulnerability_alerts) | resource |
-| [restapi_object.fork_pr_approval](https://registry.terraform.io/providers/Mastercard/restapi/latest/docs/resources/object) | resource |
 
 ## Inputs
 
@@ -51,7 +49,7 @@ No modules.
 | <a name="input_dependabot_secrets"></a> [dependabot\_secrets](#input\_dependabot\_secrets) | Key/Value pair for depenabot secrets | `map(any)` | `{}` | no |
 | <a name="input_enable_ruleset"></a> [enable\_ruleset](#input\_enable\_ruleset) | Whether to create the main branch protection ruleset. Disable for repos used as push mirrors. | `bool` | `true` | no |
 | <a name="input_enable_vulnerability_alerts"></a> [enable\_vulnerability\_alerts](#input\_enable\_vulnerability\_alerts) | Whether to enable Dependabot vulnerability alerts. Defaults to false for mirrors where scanning happens upstream. Ignored (treated as false) when archived is true, since the provider cannot manage this on a read-only repo. | `bool` | `false` | no |
-| <a name="input_fork_pr_approval_policy"></a> [fork\_pr\_approval\_policy](#input\_fork\_pr\_approval\_policy) | Which fork pull request authors need a maintainer to approve their workflow runs (Settings > Actions > General > Fork pull request workflows from outside collaborators). One of first\_time\_contributors\_new\_to\_github, first\_time\_contributors or all\_external\_contributors; null leaves the setting unmanaged. Only applied to public, non-archived repos: private repos do not run fork PR workflows unless that is enabled separately. Needs the caller to pass a configured restapi provider, see the comment on restapi\_object.fork\_pr\_approval. | `string` | `"all_external_contributors"` | no |
+| <a name="input_fork_pr_approval_policy"></a> [fork\_pr\_approval\_policy](#input\_fork\_pr\_approval\_policy) | Which fork pull request authors need a maintainer to approve their workflow runs (Settings > Actions > General > Fork pull request workflows from outside collaborators). One of first\_time\_contributors\_new\_to\_github, first\_time\_contributors or all\_external\_contributors; null leaves the setting unmanaged. Only applied to public, non-archived repos: private repos do not run fork PR workflows unless that is enabled separately. Needs the tnoff/terraform-provider-github fork build of the github provider, see the comment on github\_actions\_repository\_fork\_pr\_contributor\_approval.this. | `string` | `"all_external_contributors"` | no |
 | <a name="input_has_downloads"></a> [has\_downloads](#input\_has\_downloads) | Enable the downloads feature. Defaults to false for mirrors. | `bool` | `false` | no |
 | <a name="input_has_issues"></a> [has\_issues](#input\_has\_issues) | Enable the issues feature. Defaults to false for mirrors where issues are tracked upstream. | `bool` | `false` | no |
 | <a name="input_has_wiki"></a> [has\_wiki](#input\_has\_wiki) | Enable the wiki feature. Defaults to false for mirrors. | `bool` | `false` | no |

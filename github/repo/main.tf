@@ -148,36 +148,23 @@ resource "github_repository_ruleset" "this" {
   }
 }
 
-# Workaround: integrations/github has no resource for the fork PR contributor
-# approval policy, so it is driven through the REST API with Mastercard/restapi.
-# Remove this block (and the restapi provider requirement) and switch to
-# github_actions_repository_fork_pr_contributor_approval once it ships:
-#   issue: https://github.com/integrations/terraform-provider-github/issues/3445
-#   PR:    https://github.com/integrations/terraform-provider-github/pull/3446
-# Latest provider release when this was written: v6.13.0 (does not include it).
+# Fork PR contributor approval policy: which fork PR authors need a maintainer to
+# approve their workflow runs.
 #
-# The endpoint is a singleton: PUT and GET share one URL, PUT answers 204 with
-# no body, and there is no id, so object_id is pinned and every *_path is the
-# same URL. There is also no "off" state; destroy puts GitHub's documented
-# default back.
+# This resource is NOT in the registry's integrations/github (v6.13.0 and
+# earlier): it comes from tnoff/terraform-provider-github, a fork carrying
+# integrations/terraform-provider-github#3446 (issue #3445), which callers
+# install under the same integrations/github address. The versioned fork builds
+# are `v<upstream>+fork.<n>` (see that repo's FORK.md). With the registry
+# provider this resource fails at validate with "unsupported resource type".
+# Once an upstream release has it, drop the fork; nothing here changes.
 #
-# The caller must pass a restapi provider authenticated as a token that can
-# administer the repo (`providers = { restapi = restapi.<alias> }`). Skipped on
-# archived repos for the same reason as the vulnerability alerts above.
-resource "restapi_object" "fork_pr_approval" {
+# The API has no "off" state, so destroy resets GitHub's default
+# (first_time_contributors). Skipped on archived repos for the same reason as the
+# vulnerability alerts above.
+resource "github_actions_repository_fork_pr_contributor_approval" "this" {
   count = var.is_public && !var.archived && var.fork_pr_approval_policy != null ? 1 : 0
 
-  path           = "/repos/${github_repository.this.full_name}/actions/permissions/fork-pr-contributor-approval"
-  object_id      = "fork-pr-contributor-approval"
-  id_attribute   = "approval_policy"
-  create_path    = "/repos/${github_repository.this.full_name}/actions/permissions/fork-pr-contributor-approval"
-  read_path      = "/repos/${github_repository.this.full_name}/actions/permissions/fork-pr-contributor-approval"
-  update_path    = "/repos/${github_repository.this.full_name}/actions/permissions/fork-pr-contributor-approval"
-  destroy_path   = "/repos/${github_repository.this.full_name}/actions/permissions/fork-pr-contributor-approval"
-  create_method  = "PUT"
-  update_method  = "PUT"
-  destroy_method = "PUT"
-
-  data         = jsonencode({ approval_policy = var.fork_pr_approval_policy })
-  destroy_data = jsonencode({ approval_policy = "first_time_contributors" })
+  repository      = github_repository.this.name
+  approval_policy = var.fork_pr_approval_policy
 }
