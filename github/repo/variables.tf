@@ -137,3 +137,14 @@ variable "bypass_actors" {
   default     = []
   description = "List of actors that can bypass branch protection rules. Each object requires actor_id, actor_type (RepositoryRole, Team, Integration, OrganizationAdmin), and bypass_mode (always, pull_request). Note: individual users are not a supported actor_type - bypassing by user is not possible via rulesets. For personal repos, the repo owner already bypasses rules via the built-in Admin role (actor_id=5, RepositoryRole), which is always included. Team and OrganizationAdmin types require an org repo."
 }
+
+variable "fork_pr_approval_policy" {
+  type        = string
+  default     = "all_external_contributors"
+  description = "Which fork pull request authors need a maintainer to approve their workflow runs (Settings > Actions > General > Fork pull request workflows from outside collaborators). One of first_time_contributors_new_to_github, first_time_contributors or all_external_contributors; null leaves the setting unmanaged. Only applied to public, non-archived repos: private repos do not run fork PR workflows unless that is enabled separately. Needs the caller to pass a configured restapi provider, see the comment on restapi_object.fork_pr_approval."
+
+  validation {
+    condition     = var.fork_pr_approval_policy == null ? true : contains(["first_time_contributors_new_to_github", "first_time_contributors", "all_external_contributors"], var.fork_pr_approval_policy)
+    error_message = "fork_pr_approval_policy must be null or one of first_time_contributors_new_to_github, first_time_contributors, all_external_contributors."
+  }
+}
