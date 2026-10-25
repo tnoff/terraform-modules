@@ -204,3 +204,23 @@ is a manual, deliberate act.
    provider directories literally. `ci/renovate-terraform-docs.sh` works
    its own list out from the tree and needs no change.
 4. Add a row to the provider table in [README.md](README.md).
+
+## Validating `github/repo` needs the patched github provider
+
+`github/repo` manages the fork-PR contributor approval policy with
+`github_actions_repository_fork_pr_contributor_approval`, which the registry's
+`integrations/github` (v6.13.0) does not have. It comes from
+[`tnoff/terraform-provider-github`](https://github.com/tnoff/terraform-provider-github)
+(upstream [#3446](https://github.com/integrations/terraform-provider-github/pull/3446)),
+installed under the same `integrations/github` address. Against the registry
+provider, `terraform validate` fails with `Invalid resource type`. CI installs the
+fork's latest release before validating; to do the same locally:
+
+```bash
+export TF_CLI_CONFIG_FILE="$(ci/install-fork-provider.sh)"   # needs `gh auth login`
+cd github/repo && terraform init -backend=false && terraform validate
+```
+
+`gh` older than 2.49 has no `gh attestation`; the script says so and accepts
+`PROVIDER_MIRROR_NO_ATTESTATION=1` (checksum only). Remove the script and this
+section once an upstream release has the resource.

@@ -49,6 +49,15 @@ jobs:
       - name: terraform fmt
         run: terraform fmt -check -recursive
 
+      # github/repo uses a resource only the tnoff/terraform-provider-github fork
+      # has (upstream #3445 / PR #3446), installed under the same
+      # integrations/github address. Without this, validate fails on that module
+      # with "Invalid resource type". Remove with ci/install-fork-provider.sh.
+      - name: Install the patched github provider
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: echo "TF_CLI_CONFIG_FILE=$(ci/install-fork-provider.sh)" >> "$GITHUB_ENV"
+
       # The GitLab job ran a bare `terraform validate` at the repo root. There
       # are no .tf files at the root, so it validated an EMPTY configuration and
       # printed "Success! The configuration is valid." every time -- the job's
