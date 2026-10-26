@@ -32,12 +32,6 @@ repos:
         args: ["gitlab/"]
         pass_filenames: false
       - id: terraform-docs
-        name: terraform-docs-kubernetes
-        language: docker_image
-        entry: quay.io/terraform-docs/terraform-docs:0.20.0  # or, change latest to pin to a specific version
-        args: ["kubernetes/"]
-        pass_filenames: false
-      - id: terraform-docs
         name: terraform-docs-oci
         language: docker_image
         entry: quay.io/terraform-docs/terraform-docs:0.20.0  # or, change latest to pin to a specific version

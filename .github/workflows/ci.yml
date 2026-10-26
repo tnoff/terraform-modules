@@ -103,7 +103,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        provider: [cloudflare, discord, github, gitlab, kubernetes, oci]
+        provider: [cloudflare, discord, github, gitlab, oci]
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
@@ -121,7 +121,7 @@ jobs:
   # Asserts every terraform-docs pin in the repo agrees, and that the checksums
   # in ci/renovate-terraform-docs.sh belong to the pinned version. Its own job
   # rather than a step on `validate` because it is unrelated to terraform, and
-  # rather than a step on `docs` because that is a 6-way matrix and this needs
+  # rather than a step on `docs` because that is a 5-way matrix and this needs
   # to run once.
   pins:
     name: terraform-docs pins agree

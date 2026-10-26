@@ -40,7 +40,6 @@ usage. Provider constraints are in each module's `provider.tf`.
 | `gitlab/` | [Personal access token](https://docs.gitlab.com/user/profile/personal_access_tokens/) with `api` scope | `repo` (project, CI/CD variables, schedules, triggers) |
 | `discord/` | Bot token; the bot needs Manage Channels / Manage Roles in the server | `base-permissions`, `role`, `channel-group`, `text-channel` |
 | `oci/` | API key (user, tenancy, fingerprint, private key) | `bastion`, `container-repo`, `iam-compartment`, `iam-user`, `kms-policies`, `object-storage-bucket`, `object-storage-lifecycle-policies`, `oke-cluster`, `oke-node-pool`, `oke-vcn`, `oke-security-lists`, `oke-subnet`, `secret-vault` |
-| `kubernetes/` | Kubernetes provider configured by the caller | `ocir-image-pull` (OCIR image pull secrets) |
 
 OKE networking has no wrapper module: see the
 [OKE networking recipe](oke-networking.md) for how `oke-vcn`,

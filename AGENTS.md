@@ -17,7 +17,6 @@ modules:
 | `discord/` | `base-permissions`, `channel-group`, `role`, `text-channel` |
 | `github/` | `discord-webhook`, `repo` |
 | `gitlab/` | `repo` |
-| `kubernetes/` | `ocir-image-pull` |
 | `oci/` | `bastion`, `container-repo`, `iam-compartment`, `iam-user`, `kms-policies`, `object-storage-bucket`, `object-storage-lifecycle-policies`, `oke-cluster`, `oke-node-pool`, `oke-vcn`, `oke-security-lists`, `oke-subnet`, `secret-vault` |
 
 Each module follows the same shape:
