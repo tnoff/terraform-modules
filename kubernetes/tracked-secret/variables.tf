@@ -20,12 +20,23 @@ variable "data" {
 }
 
 variable "last_rotated" {
-  description = "When the credential in this Secret was last rotated (RFC3339), written to the secret-age-tracker.tnoff/last-rotated annotation"
+  description = "When the credential in this Secret was last rotated (RFC3339), written to the last_rotated_annotation annotation"
   type        = string
 
   validation {
     condition     = length(trimspace(var.last_rotated)) > 0
     error_message = "last_rotated must not be empty: it is what the secret-age tracker reads."
+  }
+}
+
+variable "last_rotated_annotation" {
+  description = "Annotation key last_rotated is written to. The default is the key the secret-age tracker reads"
+  type        = string
+  default     = "secret-age-tracker.tnoff/last-rotated"
+
+  validation {
+    condition     = length(trimspace(var.last_rotated_annotation)) > 0
+    error_message = "last_rotated_annotation must not be empty."
   }
 }
 
@@ -36,7 +47,7 @@ variable "labels" {
 }
 
 variable "annotations" {
-  description = "Extra annotations. The last-rotated annotation is always set from last_rotated and overrides one passed here"
+  description = "Extra annotations. The last_rotated_annotation key is always set from last_rotated and overrides one passed here"
   type        = map(string)
   default     = {}
 }
