@@ -15,9 +15,10 @@ modules:
 |---|---|
 | `cloudflare/` | `dns` |
 | `discord/` | `base-permissions`, `channel-group`, `role`, `text-channel` |
-| `github/` | `discord-webhook`, `repo` |
+| `github/` | `repo` |
 | `gitlab/` | `repo` |
-| `oci/` | `bastion`, `container-repo`, `iam-compartment`, `iam-user`, `kms-policies`, `object-storage-bucket`, `object-storage-lifecycle-policies`, `oke-cluster`, `oke-node-pool`, `oke-vcn`, `oke-security-lists`, `oke-subnet`, `secret-vault` |
+| `kubernetes/` | `tracked-secret` |
+| `oci/` | `bastion`, `container-repo`, `iam-compartment`, `iam-user`, `kms-policies`, `object-storage-bucket`, `object-storage-lifecycle-policies`, `oke-cluster`, `oke-node-pool`, `oke-vcn`, `oke-security-lists`, `oke-subnet`, `rotating-api-key`, `rotating-customer-secret-key`, `secret-vault` |
 
 Each module follows the same shape:
 

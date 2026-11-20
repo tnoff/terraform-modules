@@ -36,15 +36,21 @@ usage. Provider constraints are in each module's `provider.tf`.
 | Provider | Authentication | Modules |
 |---|---|---|
 | `cloudflare/` | [API token](https://developers.cloudflare.com/fundamentals/api/get-started/create-token/) | `dns` (DNS records) |
-| `github/` | [Personal access token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens) | `repo` (repository, rulesets, secrets, webhooks), `discord-webhook` (Discord webhook for GitHub events) |
+| `github/` | [Personal access token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens) | `repo` (repository, rulesets, secrets, webhooks) |
 | `gitlab/` | [Personal access token](https://docs.gitlab.com/user/profile/personal_access_tokens/) with `api` scope | `repo` (project, CI/CD variables, schedules, triggers) |
 | `discord/` | Bot token; the bot needs Manage Channels / Manage Roles in the server | `base-permissions`, `role`, `channel-group`, `text-channel` |
-| `oci/` | API key (user, tenancy, fingerprint, private key) | `bastion`, `container-repo`, `iam-compartment`, `iam-user`, `kms-policies`, `object-storage-bucket`, `object-storage-lifecycle-policies`, `oke-cluster`, `oke-node-pool`, `oke-vcn`, `oke-security-lists`, `oke-subnet`, `secret-vault` |
+| `kubernetes/` | Kubernetes provider configured by the caller | `tracked-secret` (Secret with the secret-age tracker's last-rotated annotation) |
+| `oci/` | API key (user, tenancy, fingerprint, private key) | `bastion`, `container-repo`, `iam-compartment`, `iam-user`, `kms-policies`, `object-storage-bucket`, `object-storage-lifecycle-policies`, `oke-cluster`, `oke-node-pool`, `oke-vcn`, `oke-security-lists`, `oke-subnet`, `rotating-api-key`, `rotating-customer-secret-key`, `secret-vault` |
 
 OKE networking has no wrapper module: see the
 [OKE networking recipe](oke-networking.md) for how `oke-vcn`,
 `oke-security-lists`, and `oke-subnet` compose. Node-pool boot customizations
 are described in [OKE node init customizations](node-init-customizations.md).
+
+`rotating-api-key` and `rotating-customer-secret-key` keep a credential in
+numbered generation slots so a new one is minted beside the old one before the
+old one is destroyed (zero-downtime rotation); the steps are in the header of
+each module's `main.tf`.
 
 ## Variable naming conventions
 
