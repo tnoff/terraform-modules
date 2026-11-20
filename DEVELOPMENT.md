@@ -33,6 +33,7 @@ directory:
 | `terraform-docs-discord` | Regenerates `discord/**/terraform.md` |
 | `terraform-docs-github` | Regenerates `github/**/terraform.md` |
 | `terraform-docs-gitlab` | Regenerates `gitlab/**/terraform.md` |
+| `terraform-docs-kubernetes` | Regenerates `kubernetes/**/terraform.md` |
 | `terraform-docs-oci` | Regenerates `oci/**/terraform.md` |
 
 Run all hooks manually:
@@ -64,7 +65,7 @@ hand** — the pre-commit hook will overwrite changes.
 Regenerate all docs without committing:
 
 ```bash
-for provider in cloudflare discord github gitlab oci; do
+for provider in cloudflare discord github gitlab kubernetes oci; do
   docker run --rm -v "$(pwd):/workspace" -w /workspace \
     quay.io/terraform-docs/terraform-docs:0.20.0 ${provider}/
 done
