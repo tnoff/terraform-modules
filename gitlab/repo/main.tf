@@ -43,8 +43,13 @@ resource "gitlab_project" "repo" {
   # pattern terraform/apps used to hand the flux-system-https Secret over to the
   # bootstrap stack. Removing this block to force a destroy is always the wrong
   # first move.
+  #
+  # import_url only seeds the project on creation. GitLab keeps the original
+  # URL after the import, so changing it later (for example after a GitHub
+  # rename) is accepted but never sticks and shows as a diff on every plan.
   lifecycle {
     prevent_destroy = true
+    ignore_changes  = [import_url]
   }
 }
 
