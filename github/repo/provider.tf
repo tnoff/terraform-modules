@@ -2,7 +2,7 @@ terraform {
   required_providers {
     github = {
       source  = "integrations/github"
-      version = "~> 6.0"
+      version = "~> 6.12"
     }
     # NOTE: github_actions_repository_fork_pr_contributor_approval (main.tf) only
     # exists in the tnoff/terraform-provider-github fork build, which callers
