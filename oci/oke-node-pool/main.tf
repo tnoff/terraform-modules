@@ -54,6 +54,45 @@ EOF
   ) : var.node_metadata
 }
 
+# Image lookup. Oracle publishes one OKE node image per Kubernetes patch version, named
+#   Oracle-Linux-<os>-[aarch64-]<yyyy.mm.dd>-<rev>-OKE-<k8s version>-<build>
+# (GPU images carry "Gen2-GPU" instead and never match). When image_ocid is null we
+# take the newest image for this exact kubernetes_version, OS release and CPU
+# architecture, so the version and the image cannot drift apart.
+#
+# The lookup uses "all", not the cluster OCID: a cluster-scoped query only lists
+# images up to the cluster's CURRENT version, so in the apply that upgrades the
+# control plane it would not yet see the new version's images and the plan would
+# fail. "all" lists every image in the region.
+data "oci_containerengine_node_pool_option" "this" {
+  count = var.image_ocid == null ? 1 : 0
+
+  node_pool_option_id = "all"
+  compartment_id      = var.compartment_ocid
+}
+
+locals {
+  # Arm shapes (VM.Standard.A1.Flex, A2, ...) use the aarch64 images; the rest are x86.
+  node_image_arch_tag = can(regex("^(VM|BM)\\.Standard\\.A[0-9]", var.node_shape)) ? "aarch64-" : ""
+
+  node_image_name_regex = join("", [
+    "^Oracle-Linux-", replace(var.node_image_os_version, ".", "\\."), "-", local.node_image_arch_tag,
+    "(?P<date>\\d{4}\\.\\d{2}\\.\\d{2})-(?P<rev>\\d+)",
+    "-OKE-", replace(var.kubernetes_version, ".", "\\."), "-\\d+$",
+  ])
+
+  # sortable key (date, then a zero-padded revision) => image OCID
+  node_image_candidates = var.image_ocid != null ? {} : {
+    for s in data.oci_containerengine_node_pool_option.this[0].sources :
+    "${regex(local.node_image_name_regex, s.source_name).date}-${format("%05d", tonumber(regex(local.node_image_name_regex, s.source_name).rev))}" => s.image_id
+    if can(regex(local.node_image_name_regex, s.source_name))
+  }
+
+  image_ocid = var.image_ocid != null ? var.image_ocid : (
+    length(local.node_image_candidates) > 0 ? local.node_image_candidates[reverse(sort(keys(local.node_image_candidates)))[0]] : null
+  )
+}
+
 # Node pool is declared twice so that the autoscaled variant can opt out of
 # terraform-managed sizing. `lifecycle.ignore_changes` cannot reference a
 # variable, so the only way to make "ignore node_config_details.size" toggleable
@@ -108,12 +147,18 @@ resource "oci_containerengine_node_pool" "this" {
     ocpus         = var.num_ocpus
   }
   node_source_details {
-    image_id    = var.image_ocid
+    image_id    = local.image_ocid
     source_type = "image"
 
     boot_volume_size_in_gbs = 50
   }
   ssh_public_key = var.ssh_public_key
+  lifecycle {
+    precondition {
+      condition     = local.image_ocid != null
+      error_message = "No OKE node image found for Kubernetes ${var.kubernetes_version} on Oracle Linux ${var.node_image_os_version} (${var.node_shape}). Oracle may not have published it yet, or node_image_os_version is wrong; set image_ocid to pin one."
+    }
+  }
 }
 
 resource "oci_containerengine_node_pool" "this_autoscaled" {
@@ -158,7 +203,7 @@ resource "oci_containerengine_node_pool" "this_autoscaled" {
     ocpus         = var.num_ocpus
   }
   node_source_details {
-    image_id    = var.image_ocid
+    image_id    = local.image_ocid
     source_type = "image"
 
     boot_volume_size_in_gbs = 50
@@ -170,5 +215,10 @@ resource "oci_containerengine_node_pool" "this_autoscaled" {
   # the pool back to var.node_pool_size and undo a burst.
   lifecycle {
     ignore_changes = [node_config_details[0].size]
+
+    precondition {
+      condition     = local.image_ocid != null
+      error_message = "No OKE node image found for Kubernetes ${var.kubernetes_version} on Oracle Linux ${var.node_image_os_version} (${var.node_shape}). Oracle may not have published it yet, or node_image_os_version is wrong; set image_ocid to pin one."
+    }
   }
 }
