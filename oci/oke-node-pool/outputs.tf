@@ -6,3 +6,8 @@ output "node_pool" {
     one(oci_containerengine_node_pool.this_autoscaled[*]),
   )
 }
+
+# The image the pool is using: image_ocid if pinned, otherwise the one looked up.
+output "image_ocid" {
+  value = local.image_ocid
+}

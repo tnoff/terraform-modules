@@ -22,6 +22,7 @@ No modules.
 |------|------|
 | [oci_containerengine_node_pool.this](https://registry.terraform.io/providers/oracle/oci/latest/docs/resources/containerengine_node_pool) | resource |
 | [oci_containerengine_node_pool.this_autoscaled](https://registry.terraform.io/providers/oracle/oci/latest/docs/resources/containerengine_node_pool) | resource |
+| [oci_containerengine_node_pool_option.this](https://registry.terraform.io/providers/oracle/oci/latest/docs/data-sources/containerengine_node_pool_option) | data source |
 
 ## Inputs
 
@@ -38,13 +39,14 @@ No modules.
 | <a name="input_ignore_node_count_changes"></a> [ignore\_node\_count\_changes](#input\_ignore\_node\_count\_changes) | When true, terraform stops managing node\_config\_details.size (it is ignored via lifecycle) so an external Kubernetes Cluster Autoscaler can own the running node count without an apply fighting it. Default false keeps terraform-managed sizing for all existing consumers. Toggling this swaps which underlying resource is used (this <-> this\_autoscaled); to avoid recreating a live pool, do a one-time `terraform state mv` between the two addresses in the consuming stack. | `bool` | `false` | no |
 | <a name="input_image_gc_high_threshold_percent"></a> [image\_gc\_high\_threshold\_percent](#input\_image\_gc\_high\_threshold\_percent) | Disk-usage % at which kubelet starts garbage-collecting unused images. Lowered from the kubelet default (85) because OKE OL8 boot volumes are small (~38 GiB usable on a 50 GB volume) and the steady-state image cache can sit close to the eviction threshold. Only applied when enable\_node\_init\_customizations is true. | `number` | `60` | no |
 | <a name="input_image_gc_low_threshold_percent"></a> [image\_gc\_low\_threshold\_percent](#input\_image\_gc\_low\_threshold\_percent) | Disk-usage % kubelet aims to reach when garbage-collecting images. Only applied when enable\_node\_init\_customizations is true. | `number` | `40` | no |
-| <a name="input_image_ocid"></a> [image\_ocid](#input\_image\_ocid) | Image OCID for node pools | `string` | `null` | no |
+| <a name="input_image_ocid"></a> [image\_ocid](#input\_image\_ocid) | Pin the node image by OCID. Null (default) looks up the newest OKE image for kubernetes\_version, node\_image\_os\_version and the node\_shape's CPU architecture, so the image follows the version. A new Oracle image for the same version is picked up on the next plan (an in-place change that only affects nodes created afterwards); pin this to stop that. | `string` | `null` | no |
 | <a name="input_instance_defined_tags"></a> [instance\_defined\_tags](#input\_instance\_defined\_tags) | Defined tags for node pool instances | `map(string)` | `{}` | no |
 | <a name="input_instance_freeform_tags"></a> [instance\_freeform\_tags](#input\_instance\_freeform\_tags) | Freeform tags for node pool instances | `map(any)` | `{}` | no |
 | <a name="input_kms_key_ocid"></a> [kms\_key\_ocid](#input\_kms\_key\_ocid) | OCID of KMS Key Id to use for nodes | `string` | n/a | yes |
-| <a name="input_kubernetes_version"></a> [kubernetes\_version](#input\_kubernetes\_version) | Kubernetes version for cluster | `string` | `"1.33.0"` | no |
+| <a name="input_kubernetes_version"></a> [kubernetes\_version](#input\_kubernetes\_version) | Kubernetes version for the node pool, without the leading v (e.g. 1.37.1). Tie it to the cluster's version in the consuming stack. Also selects the node image when image\_ocid is null. | `string` | `"1.33.0"` | no |
 | <a name="input_max_pods_per_node"></a> [max\_pods\_per\_node](#input\_max\_pods\_per\_node) | Max pods per node. Drives how many pod IPs each node pre-reserves from the pod subnet under OCI\_VCN\_IP\_NATIVE. Null (default) uses the OKE/provider default (31). | `number` | `null` | no |
 | <a name="input_memory_in_gbs"></a> [memory\_in\_gbs](#input\_memory\_in\_gbs) | Memory for each node in node pool | `number` | `6` | no |
+| <a name="input_node_image_os_version"></a> [node\_image\_os\_version](#input\_node\_image\_os\_version) | Oracle Linux release to look the node image up for when image\_ocid is null (e.g. 8.10, 9.8). Moving to a new release is a node-image change like any other: new nodes pick it up, existing nodes keep theirs until recycled. | `string` | `"8.10"` | no |
 | <a name="input_node_labels"></a> [node\_labels](#input\_node\_labels) | Kubernetes node labels | `map(any)` | `{}` | no |
 | <a name="input_node_metadata"></a> [node\_metadata](#input\_node\_metadata) | Additional metadata key/value pairs to add to each node instance | `map(string)` | `{}` | no |
 | <a name="input_node_pool_size"></a> [node\_pool\_size](#input\_node\_pool\_size) | Node pool size. When ignore\_node\_count\_changes is true this is only the initial size; the cluster autoscaler owns it thereafter. | `number` | `1` | no |
@@ -61,5 +63,6 @@ No modules.
 
 | Name | Description |
 |------|-------------|
+| <a name="output_image_ocid"></a> [image\_ocid](#output\_image\_ocid) | The image the pool is using: image\_ocid if pinned, otherwise the one looked up. |
 | <a name="output_node_pool"></a> [node\_pool](#output\_node\_pool) | Exactly one of this/this\_autoscaled exists (see main.tf); coalesce resolves to whichever is active so consumers keep referencing a single `node_pool` object. |
 <!-- END_TF_DOCS -->

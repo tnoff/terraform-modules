@@ -27,13 +27,19 @@ variable "display_name" {
 variable "kubernetes_version" {
   type        = string
   default     = "1.33.0"
-  description = "Kubernetes version for cluster"
+  description = "Kubernetes version for the node pool, without the leading v (e.g. 1.37.1). Tie it to the cluster's version in the consuming stack. Also selects the node image when image_ocid is null."
 }
 
 variable "image_ocid" {
   type        = string
   default     = null
-  description = "Image OCID for node pools"
+  description = "Pin the node image by OCID. Null (default) looks up the newest OKE image for kubernetes_version, node_image_os_version and the node_shape's CPU architecture, so the image follows the version. A new Oracle image for the same version is picked up on the next plan (an in-place change that only affects nodes created afterwards); pin this to stop that."
+}
+
+variable "node_image_os_version" {
+  type        = string
+  default     = "8.10"
+  description = "Oracle Linux release to look the node image up for when image_ocid is null (e.g. 8.10, 9.8). Moving to a new release is a node-image change like any other: new nodes pick it up, existing nodes keep theirs until recycled."
 }
 
 variable "ssh_public_key" {
